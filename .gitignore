@@ -7,21 +7,10 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Dependencies & builds
 node_modules
 dist
 dist-ssr
-
-# Env files (SECRETS)
-.env
-.env.*
-!.env.example
-
-# Local files
 *.local
-
-# Vercel
-.vercel
 
 # Editor directories and files
 .vscode/*

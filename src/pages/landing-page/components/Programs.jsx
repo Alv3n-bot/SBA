@@ -286,18 +286,7 @@ function Programs() {
         </div>
 
         {/* Bottom CTA */}
-        <div className="mt-12 sm:mt-16 text-center">
-          <p className="text-sm sm:text-base text-gray-600 mb-4 px-4">
-            Need help choosing the right program?
-          </p>
-          <a
-            href="/dashboard"
-            className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 border-2 border-black text-black font-semibold rounded-lg hover:bg-black hover:text-white transition-all duration-300 no-underline"
-          >
-            <span className="text-sm sm:text-base">View All Courses</span>
-            <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
-          </a>
-        </div>
+       
       </div>
 
       {/* Max Courses Modal */}

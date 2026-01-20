@@ -240,21 +240,7 @@ function About() {
           </div>
         </div>
 
-        {/* CTA */}
-        <div className="bg-black rounded-3xl p-8 md:p-12 text-center text-white">
-          <h3 className="text-3xl md:text-4xl font-bold mb-4">
-            Ready to Start Learning?
-          </h3>
-          <p className="text-lg md:text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-            Join hundreds of students building real skills for real careers in tech.
-          </p>
-          <button className="inline-flex items-center px-8 py-4 bg-white text-black font-bold rounded-full text-lg hover:bg-gray-100 transition-all duration-300 hover:scale-105 shadow-lg">
-            Browse Courses
-            <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </button>
-        </div>
+        
 
       </div>
     </section>

@@ -127,7 +127,7 @@ export default function Auth() {
         subscriptionStatus: 'inactive'
       });
       
-      navigate('/enroll');
+      navigate('/ehub');
     } catch (err) {
       setError(err.message);
       setLoading(false);

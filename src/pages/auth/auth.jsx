@@ -181,7 +181,7 @@ export default function Auth() {
           subscriptionStatus: 'inactive'
         });
         
-        navigate('/enroll');
+        navigate('/ehub');
       }
     } catch (err) {
       if (err.code === 'auth/email-already-in-use') {

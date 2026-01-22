@@ -1,59 +1,123 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { doc, getDoc, setDoc, updateDoc, collection, query, where, getDocs } from 'firebase/firestore';
-import { db, auth } from '../../firebase';
+import { useParams } from 'react-router-dom';
 import {
-  ChevronLeft,
-  ChevronRight,
-  CheckCircle,
-  Circle,
-  Menu,
-  X,
-  BookOpen,
-  Play,
-  FileText,
-  Clock,
-  Award,
-  Home,
-  ChevronDown,
-  Send,
-  Edit2,
-  Lock,
-  CreditCard,
-  Zap,
-  RotateCcw
-} from 'lucide-react';
+  doc, getDoc, setDoc, updateDoc, collection, query, where, getDocs,
+  serverTimestamp, addDoc
+} from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { db, auth, storage } from '../../firebase';
+import { FileText } from 'lucide-react';
+
+// Component imports
+import CourseSidebar from './components/CourseSidebar';
+import CourseHeader from './components/CourseHeader';
+import ContentRenderer from './components/ContentRenderer';
+import NavigationButtons from './components/NavigationButtons';
+import PaywallScreen from './components/PaywallScreen';
+import LoadingState from './components/LoadingState';
+import ErrorState from './components/ErrorState';
+import Settings from '../ehub/Settings';
+import Notifications from '../ehub/Notifications';
 
 export default function CourseLearning() {
   const { courseId } = useParams();
-  const navigate = useNavigate();
+  
+  // Core State
   const [course, setCourse] = useState(null);
-  const [userProgress, setUserProgress] = useState({});
-  const [currentWeekIndex, setCurrentWeekIndex] = useState(0);
-  const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
+  const [userData, setUserData] = useState(null);
+  const [cohort, setCohort] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  
+  // Navigation State
+  const [currentWeekIndex, setCurrentWeekIndex] = useState(0);
+  const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
   const [showSidebar, setShowSidebar] = useState(true);
-  const [userData, setUserData] = useState(null);
   const [expandedWeeks, setExpandedWeeks] = useState({});
-  const [quizStates, setQuizStates] = useState({});
+  
+  // Progress State
+  const [userProgress, setUserProgress] = useState(null);
+  const [completedSections, setCompletedSections] = useState(new Set());
+  
+  // Quiz State
+  const [quizResults, setQuizResults] = useState({});
+  
+  // Assignment State
   const [submissions, setSubmissions] = useState({});
-  const [editingSubmission, setEditingSubmission] = useState(null);
-  const [linkInput, setLinkInput] = useState('');
-  const [activeTab, setActiveTab] = useState('content');
-  const [peerWeekIndex, setPeerWeekIndex] = useState(0);
-  const [assignmentsByWeek, setAssignmentsByWeek] = useState({});
-  const [peerSubmissions, setPeerSubmissions] = useState({});
-  const [reviews, setReviews] = useState({});
-  const [quizScores, setQuizScores] = useState({});
+  const [uploadingFile, setUploadingFile] = useState(null);
+  
+  // Subscription State
   const [hasActiveSubscription, setHasActiveSubscription] = useState(false);
   const [subscriptionChecked, setSubscriptionChecked] = useState(false);
 
+  // Modal States
+  const [showSettings, setShowSettings] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+
+  // ==================== INITIALIZATION ====================
   useEffect(() => {
-    loadCourseAndProgress();
+    initializeLearning();
   }, [courseId]);
 
-  // Check subscription status
+  const initializeLearning = async () => {
+    setLoading(true);
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        window.location.href = '/login';
+        return;
+      }
+
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      if (!userDoc.exists()) {
+        setError('User profile not found');
+        setSubscriptionChecked(true);
+        setLoading(false);
+        return;
+      }
+
+      const userDataResult = userDoc.data();
+      setUserData(userDataResult);
+
+      const isActive = checkSubscription(userDataResult);
+      setHasActiveSubscription(isActive);
+      setSubscriptionChecked(true);
+
+      if (!isActive) {
+        setLoading(false);
+        return;
+      }
+
+      const courseDoc = await getDoc(doc(db, 'courses', courseId));
+      if (!courseDoc.exists()) {
+        setError('Course not found');
+        setLoading(false);
+        return;
+      }
+
+      const courseData = courseDoc.data();
+      setCourse(courseData);
+
+      await loadOrCreateCohort(user.uid, courseId);
+
+      const initialExpanded = {};
+      if (courseData.weeks?.length > 0) {
+        initialExpanded[courseData.weeks[0].id] = true;
+      }
+      setExpandedWeeks(initialExpanded);
+
+      await loadOrCreateProgress(user.uid, courseId, courseData);
+      await loadSubmissions(user.uid, courseId);
+      await loadQuizResults(user.uid, courseId);
+    } catch (err) {
+      console.error('Error initializing learning:', err);
+      setError('Failed to load course: ' + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ==================== SUBSCRIPTION CHECK ====================
   const checkSubscription = (userData) => {
     if (!userData?.subscription?.endDate) return false;
     const endDate = userData.subscription.endDate.toDate
@@ -62,244 +126,328 @@ export default function CourseLearning() {
     return endDate > new Date();
   };
 
-  // Load course data and user progress
-  const loadCourseAndProgress = async () => {
-    setLoading(true);
-    setError('');
+  // ==================== COHORT MANAGEMENT ====================
+  const loadOrCreateCohort = async (userId, courseId) => {
     try {
-      const user = auth.currentUser;
-      if (!user) {
-        navigate('/login');
-        return;
-      }
+      const cohortQuery = query(
+        collection(db, 'cohorts'),
+        where('courseId', '==', courseId),
+        where('studentIds', 'array-contains', userId)
+      );
+      const cohortSnapshot = await getDocs(cohortQuery);
 
-      // Load user data and check subscription
-      const userDoc = await getDoc(doc(db, 'users', user.uid));
-      if (userDoc.exists()) {
-        const data = userDoc.data();
-        setUserData(data);
-        const isActive = checkSubscription(data);
-        setHasActiveSubscription(isActive);
-        setSubscriptionChecked(true);
-        if (!isActive) {
-          setLoading(false);
-          return;
+      if (!cohortSnapshot.empty) {
+        const cohortData = cohortSnapshot.docs[0].data();
+        setCohort({ id: cohortSnapshot.docs[0].id, ...cohortData });
+      } else {
+        const allCohortsQuery = query(
+          collection(db, 'cohorts'),
+          where('courseId', '==', courseId),
+          where('status', '==', 'active')
+        );
+        const allCohortsSnapshot = await getDocs(allCohortsQuery);
+        let targetCohort = null;
+
+        for (const doc of allCohortsSnapshot.docs) {
+          const data = doc.data();
+          if ((data.studentIds?.length || 0) < 30) {
+            targetCohort = { id: doc.id, ...data };
+            break;
+          }
         }
-      } else {
-        setSubscriptionChecked(true);
-        setHasActiveSubscription(false);
-        setLoading(false);
-        return;
+
+        if (targetCohort) {
+          await updateDoc(doc(db, 'cohorts', targetCohort.id), {
+            studentIds: [...(targetCohort.studentIds || []), userId],
+            updatedAt: serverTimestamp()
+          });
+          setCohort(targetCohort);
+        } else {
+          const newCohort = {
+            courseId,
+            name: `Cohort ${allCohortsSnapshot.size + 1}`,
+            studentIds: [userId],
+            status: 'active',
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+          };
+          const cohortRef = await addDoc(collection(db, 'cohorts'), newCohort);
+          setCohort({ id: cohortRef.id, ...newCohort });
+        }
       }
+    } catch (err) {
+      console.error('Error managing cohort:', err);
+    }
+  };
 
-      // Load course
-      const courseDoc = await getDoc(doc(db, 'courses', courseId));
-      if (!courseDoc.exists()) {
-        setError('Course not found');
-        setLoading(false);
-        return;
-      }
-      const courseData = courseDoc.data();
-      setCourse(courseData);
-
-      // Initialize expanded weeks
-      const initialExpanded = {};
-      courseData.weeks.forEach(week => {
-        initialExpanded[week.id] = false;
-      });
-      setExpandedWeeks(initialExpanded);
-
-      // Load or initialize progress
-      const progressDoc = await getDoc(doc(db, 'progress', `${user.uid}_${courseId}`));
-      let progressData;
+  // ==================== PROGRESS MANAGEMENT ====================
+  const loadOrCreateProgress = async (userId, courseId, courseData) => {
+    try {
+      const progressDoc = await getDoc(doc(db, 'progress', `${userId}_${courseId}`));
       if (progressDoc.exists()) {
-        progressData = progressDoc.data();
+        const progressData = progressDoc.data();
         setUserProgress(progressData);
+        setCompletedSections(new Set(progressData.completedSections || []));
       } else {
-        progressData = {
-          userId: user.uid,
-          courseId: courseId,
+        const newProgress = {
+          userId,
+          courseId,
           completedSections: [],
           quizScores: {},
           lastAccessedWeek: 0,
           lastAccessedSection: 0,
-          startedAt: new Date(),
-          lastAccessedAt: new Date()
+          startedAt: serverTimestamp(),
+          lastAccessedAt: serverTimestamp()
         };
-        await setDoc(doc(db, 'progress', `${user.uid}_${courseId}`), progressData);
-        setUserProgress(progressData);
+        await setDoc(doc(db, 'progress', `${userId}_${courseId}`), newProgress);
+        setUserProgress(newProgress);
+        setCompletedSections(new Set());
       }
+    } catch (err) {
+      console.error('Error loading progress:', err);
+    }
+  };
 
-      // Collect assignments and initialize states
-      const assByWeek = {};
-      const subs = {};
-      const quizzes = {};
-      const scores = progressData.quizScores || {};
+  const markSectionComplete = async (weekId, sectionId) => {
+    if (!hasActiveSubscription) return;
+    const sectionKey = `${weekId}_${sectionId}`;
+    if (completedSections.has(sectionKey)) return;
 
-      courseData.weeks.forEach(week => {
-        assByWeek[week.id] = [];
-        week.sections.forEach(section => {
-          section.content.forEach(block => {
-            if (block.type === 'assignment' && block.submissionType === 'link') {
-              assByWeek[week.id].push(block.id);
-              subs[block.id] = { link: '', submittedAt: null };
-            } else if (block.type === 'quiz' && Array.isArray(block.questions)) {
-              quizzes[block.id] = { 
-                questions: block.questions.map(() => ({ selected: null, submitted: false })),
-                score: scores[block.id] || null
-              };
-            }
-          });
-        });
+    try {
+      const newCompleted = new Set(completedSections);
+      newCompleted.add(sectionKey);
+      setCompletedSections(newCompleted);
+
+      const completedArray = Array.from(newCompleted);
+      await updateDoc(doc(db, 'progress', `${auth.currentUser.uid}_${courseId}`), {
+        completedSections: completedArray,
+        lastAccessedAt: serverTimestamp()
       });
 
-      setAssignmentsByWeek(assByWeek);
-      setQuizStates(quizzes);
-      setQuizScores(scores);
-
-      // Fetch submissions
-      for (const blockId in subs) {
-        const subDoc = await getDoc(doc(db, 'submissions', `${user.uid}_${courseId}_${blockId}`));
-        if (subDoc.exists()) {
-          subs[blockId] = subDoc.data();
-        }
-      }
-      setSubmissions(subs);
-
-      // Fetch quiz submissions
-      for (const blockId in quizzes) {
-        const block = courseData.weeks.flatMap(w => w.sections).flatMap(s => s.content).find(b => b.id === blockId && b.type === 'quiz');
-        if (block && Array.isArray(block.questions)) {
-          for (let qIdx = 0; qIdx < block.questions.length; qIdx++) {
-            const quizDoc = await getDoc(doc(db, 'quiz_submissions', `${user.uid}_${courseId}_${blockId}_${qIdx}`));
-            if (quizDoc.exists()) {
-              const data = quizDoc.data();
-              quizzes[blockId].questions[qIdx] = { selected: data.answer, submitted: true };
-            }
-          }
-        }
-      }
-      setQuizStates(quizzes);
-
-      // Load peer submissions
-      const peerSubs = {};
-      for (const weekId in assByWeek) {
-        peerSubs[weekId] = [];
-        for (const blockId of assByWeek[weekId]) {
-          const q = query(collection(db, 'submissions'), where('courseId', '==', courseId), where('blockId', '==', blockId));
-          const querySnapshot = await getDocs(q);
-          querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            if (data.userId !== user.uid) {
-              peerSubs[weekId].push({ ...data, submissionId: doc.id, blockId });
-            }
-          });
-        }
-      }
-      setPeerSubmissions(peerSubs);
-
-      // Load reviews
-      const revs = {};
-      for (const weekId in peerSubs) {
-        for (const sub of peerSubs[weekId]) {
-          const reviewDoc = await getDoc(doc(db, 'reviews', `${sub.submissionId}_${auth.currentUser.uid}`));
-          if (reviewDoc.exists()) {
-            revs[sub.submissionId] = reviewDoc.data();
-          }
-        }
-      }
-      setReviews(revs);
-
+      setUserProgress(prev => ({
+        ...prev,
+        completedSections: completedArray
+      }));
     } catch (err) {
-      console.error('Error loading course:', err);
-      setError('Error loading course: ' + err.message);
-    } finally {
-      setLoading(false);
+      console.error('Error marking section complete:', err);
     }
   };
 
-  // Check if section is complete automatically based on quiz/assignment completion
-  const checkSectionComplete = async (blockId) => {
+  const checkAndMarkSectionComplete = async (weekId, sectionId) => {
     if (!course || !hasActiveSubscription) return;
 
-    // Find the section containing this block
-    let weekId = null;
-    let sectionId = null;
-    
-    for (const week of course.weeks) {
-      for (const section of week.sections) {
-        if (section.content.some(b => b.id === blockId)) {
-          weekId = week.id;
-          sectionId = section.id;
-          break;
-        }
-      }
-      if (weekId) break;
-    }
-
-    if (!weekId || !sectionId) return;
-
-    // Get the section
     const week = course.weeks.find(w => w.id === weekId);
-    const section = week.sections.find(s => s.id === sectionId);
+    const section = week?.sections.find(s => s.id === sectionId);
+    if (!section) return;
 
-    // Check if all quizzes and assignments in this section are complete
     let allComplete = true;
     for (const block of section.content) {
-      if (block.type === 'quiz' && Array.isArray(block.questions)) {
-        const quizState = quizStates[block.id];
-        if (!quizState || !quizState.questions.every(q => q.submitted)) {
+      if (block.type === 'quiz') {
+        const result = quizResults[block.id];
+        if (!result || !result.passed) {
           allComplete = false;
           break;
         }
-      } else if (block.type === 'assignment' && block.submissionType === 'link') {
+      } else if (block.type === 'assignment') {
         const submission = submissions[block.id];
-        if (!submission || !submission.link) {
+        if (!submission || !submission.submittedAt) {
           allComplete = false;
           break;
         }
       }
     }
 
-    // If all complete, mark section as complete
     if (allComplete) {
-      const sectionKey = `${weekId}_${sectionId}`;
-      if (!userProgress.completedSections?.includes(sectionKey)) {
-        const updatedSections = [...(userProgress.completedSections || []), sectionKey];
-        const updatedProgress = {
-          ...userProgress,
-          completedSections: updatedSections,
-          lastAccessedAt: new Date()
-        };
-        setUserProgress(updatedProgress);
-        
-        try {
-          await updateDoc(doc(db, 'progress', `${auth.currentUser.uid}_${courseId}`), {
-            completedSections: updatedSections,
-            lastAccessedAt: new Date()
-          });
-        } catch (err) {
-          console.error('Error updating section completion:', err);
-        }
-      }
+      await markSectionComplete(weekId, sectionId);
     }
   };
 
-  // Check if section is completed
-  const isSectionCompleted = (weekId, sectionId) => {
-    const sectionKey = `${weekId}_${sectionId}`;
-    return userProgress.completedSections?.includes(sectionKey) || false;
+  // ==================== QUIZ MANAGEMENT ====================
+  const loadQuizResults = async (userId, courseId) => {
+    try {
+      const quizQuery = query(
+        collection(db, 'quiz_results'),
+        where('userId', '==', userId),
+        where('courseId', '==', courseId)
+      );
+      const quizSnapshot = await getDocs(quizQuery);
+      const results = {};
+
+      quizSnapshot.forEach((doc) => {
+        const data = doc.data();
+        results[data.quizId] = {
+          score: data.score,
+          totalQuestions: data.totalQuestions,
+          correctAnswers: data.correctAnswers,
+          answers: data.answers,
+          passed: data.passed,
+          submittedAt: data.submittedAt
+        };
+      });
+
+      setQuizResults(results);
+    } catch (err) {
+      console.error('Error loading quiz results:', err);
+    }
   };
 
-  // Toggle week expansion
+  const handleQuizComplete = (quizId, result) => {
+    setQuizResults(prev => ({
+      ...prev,
+      [quizId]: result
+    }));
+  };
+
+  // ==================== ASSIGNMENT MANAGEMENT ====================
+  const loadSubmissions = async (userId, courseId) => {
+    try {
+      const submissionQuery = query(
+        collection(db, 'submissions'),
+        where('userId', '==', userId),
+        where('courseId', '==', courseId)
+      );
+      const submissionSnapshot = await getDocs(submissionQuery);
+      const subs = {};
+
+      submissionSnapshot.forEach((doc) => {
+        const data = doc.data();
+        subs[data.assignmentId] = {
+          id: doc.id,
+          ...data
+        };
+      });
+
+      setSubmissions(subs);
+    } catch (err) {
+      console.error('Error loading submissions:', err);
+    }
+  };
+
+  const handleTextSubmission = async (assignmentBlock, textContent, weekId, sectionId) => {
+    if (!hasActiveSubscription || !textContent.trim()) return;
+
+    try {
+      const submissionData = {
+        userId: auth.currentUser.uid,
+        courseId,
+        assignmentId: assignmentBlock.id,
+        type: 'text',
+        content: textContent,
+        submittedAt: serverTimestamp(),
+        status: 'submitted'
+      };
+
+      const submissionRef = await addDoc(collection(db, 'submissions'), submissionData);
+
+      setSubmissions(prev => ({
+        ...prev,
+        [assignmentBlock.id]: {
+          id: submissionRef.id,
+          ...submissionData
+        }
+      }));
+
+      await checkAndMarkSectionComplete(weekId, sectionId);
+      alert('Assignment submitted successfully!');
+    } catch (err) {
+      console.error('Error submitting assignment:', err);
+      alert('Failed to submit assignment. Please try again.');
+    }
+  };
+
+  const handleFileUpload = async (assignmentBlock, file, weekId, sectionId) => {
+    if (!hasActiveSubscription || !file) return;
+
+    try {
+      setUploadingFile(assignmentBlock.id);
+
+      const storageRef = ref(storage, `submissions/${auth.currentUser.uid}/${courseId}/${assignmentBlock.id}/${file.name}`);
+      await uploadBytes(storageRef, file);
+      const fileUrl = await getDownloadURL(storageRef);
+
+      const submissionData = {
+        userId: auth.currentUser.uid,
+        courseId,
+        assignmentId: assignmentBlock.id,
+        type: 'file',
+        fileUrl,
+        fileName: file.name,
+        fileSize: file.size,
+        submittedAt: serverTimestamp(),
+        status: 'submitted'
+      };
+
+      const submissionRef = await addDoc(collection(db, 'submissions'), submissionData);
+
+      setSubmissions(prev => ({
+        ...prev,
+        [assignmentBlock.id]: {
+          id: submissionRef.id,
+          ...submissionData
+        }
+      }));
+
+      await checkAndMarkSectionComplete(weekId, sectionId);
+      alert('File uploaded successfully!');
+    } catch (err) {
+      console.error('Error uploading file:', err);
+      alert('Failed to upload file. Please try again.');
+    } finally {
+      setUploadingFile(null);
+    }
+  };
+
+  const handleUrlSubmission = async (assignmentBlock, url, weekId, sectionId) => {
+    if (!hasActiveSubscription || !url.trim()) return;
+
+    try {
+      const submissionData = {
+        userId: auth.currentUser.uid,
+        courseId,
+        assignmentId: assignmentBlock.id,
+        type: 'url',
+        url,
+        submittedAt: serverTimestamp(),
+        status: 'submitted'
+      };
+
+      const submissionRef = await addDoc(collection(db, 'submissions'), submissionData);
+
+      setSubmissions(prev => ({
+        ...prev,
+        [assignmentBlock.id]: {
+          id: submissionRef.id,
+          ...submissionData
+        }
+      }));
+
+      await checkAndMarkSectionComplete(weekId, sectionId);
+      alert('URL submitted successfully!');
+    } catch (err) {
+      console.error('Error submitting URL:', err);
+      alert('Failed to submit URL. Please try again.');
+    }
+  };
+
+  // ==================== NAVIGATION ====================
   const toggleWeek = (weekId) => {
-    setExpandedWeeks(prev => ({ ...prev, [weekId]: !prev[weekId] }));
+    setExpandedWeeks(prev => ({
+      ...prev,
+      [weekId]: !prev[weekId]
+    }));
   };
 
-  // Navigation functions
+  const goToSection = (weekIndex, sectionIndex) => {
+    setCurrentWeekIndex(weekIndex);
+    setCurrentSectionIndex(sectionIndex);
+    setShowSidebar(false);
+    window.scrollTo(0, 0);
+  };
+
   const goToNextSection = () => {
-    if (!hasActiveSubscription) return;
+    if (!hasActiveSubscription || !course) return;
     const currentWeek = course.weeks[currentWeekIndex];
+
     if (currentSectionIndex < currentWeek.sections.length - 1) {
       setCurrentSectionIndex(currentSectionIndex + 1);
     } else if (currentWeekIndex < course.weeks.length - 1) {
@@ -310,799 +458,125 @@ export default function CourseLearning() {
   };
 
   const goToPreviousSection = () => {
-    if (!hasActiveSubscription) return;
+    if (!hasActiveSubscription || !course) return;
+
     if (currentSectionIndex > 0) {
       setCurrentSectionIndex(currentSectionIndex - 1);
     } else if (currentWeekIndex > 0) {
+      const prevWeek = course.weeks[currentWeekIndex - 1];
       setCurrentWeekIndex(currentWeekIndex - 1);
-      setCurrentSectionIndex(course.weeks[currentWeekIndex - 1].sections.length - 1);
+      setCurrentSectionIndex(prevWeek.sections.length - 1);
     }
     window.scrollTo(0, 0);
   };
 
-  // Get YouTube embed URL
-  const getYouTubeEmbedUrl = (url) => {
-    if (!url) return '';
-    const videoId = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/)?.[1];
-    return videoId ? `https://www.youtube.com/embed/${videoId}` : '';
-  };
-
-  // Quiz handlers
-  const handleQuizSelect = (blockId, qIdx, answerIndex) => {
-    if (!hasActiveSubscription) return;
-    setQuizStates(prev => {
-      const blockState = [...prev[blockId].questions];
-      blockState[qIdx] = { ...blockState[qIdx], selected: answerIndex };
-      return { ...prev, [blockId]: { ...prev[blockId], questions: blockState } };
-    });
-  };
-
-  const handleSubmitQuiz = async (blockId) => {
-    if (!hasActiveSubscription) return;
-    const block = course.weeks.flatMap(w => w.sections).flatMap(s => s.content).find(b => b.id === blockId);
-    if (!block || !Array.isArray(block.questions)) return;
-
-    const questionsState = quizStates[blockId].questions;
-    if (questionsState.some(q => q.selected === null)) return;
-
-    let correctCount = 0;
-    try {
-      // Save each question submission
-      for (let qIdx = 0; qIdx < block.questions.length; qIdx++) {
-        const selected = questionsState[qIdx].selected;
-        const correctAnswer = block.questions[qIdx].correctAnswer;
-        const isCorrect = selected === correctAnswer;
-        if (isCorrect) correctCount++;
-
-        const subData = {
-          answer: selected,
-          correct: isCorrect,
-          submittedAt: new Date()
-        };
-        await setDoc(doc(db, 'quiz_submissions', `${auth.currentUser.uid}_${courseId}_${blockId}_${qIdx}`), subData);
-
-        setQuizStates(prev => {
-          const blockState = [...prev[blockId].questions];
-          blockState[qIdx] = { ...blockState[qIdx], submitted: true };
-          return { ...prev, [blockId]: { ...prev[blockId], questions: blockState } };
-        });
-      }
-
-      // Calculate score
-      const score = Math.round((correctCount / block.questions.length) * 100);
-      
-      // Update quiz scores
-      const updatedScores = { ...quizScores, [blockId]: score };
-      setQuizScores(updatedScores);
-      
-      setQuizStates(prev => ({
-        ...prev,
-        [blockId]: { ...prev[blockId], score }
-      }));
-
-      // Update progress with quiz score
-      const updatedProgress = { ...userProgress, quizScores: updatedScores };
-      setUserProgress(updatedProgress);
-      await updateDoc(doc(db, 'progress', `${auth.currentUser.uid}_${courseId}`), {
-        quizScores: updatedScores,
-        lastAccessedAt: new Date()
-      });
-
-      // Check if section is now complete
-      await checkSectionComplete(blockId);
-
-    } catch (err) {
-      console.error('Error submitting quiz:', err);
-    }
-  };
-
-  // Retry quiz
-  const handleRetryQuiz = (blockId) => {
-    if (!hasActiveSubscription) return;
-    const block = course.weeks.flatMap(w => w.sections).flatMap(s => s.content).find(b => b.id === blockId);
-    if (!block || !Array.isArray(block.questions)) return;
-
-    setQuizStates(prev => ({
-      ...prev,
-      [blockId]: {
-        questions: block.questions.map(() => ({ selected: null, submitted: false })),
-        score: prev[blockId].score
-      }
-    }));
-  };
-
-  // Assignment handlers
-  const handleSubmitLink = async (blockId) => {
-    if (!hasActiveSubscription || !linkInput) return;
-    const subData = {
-      link: linkInput,
-      submittedAt: new Date(),
-      userId: auth.currentUser.uid,
-      courseId,
-      blockId
-    };
-    try {
-      await setDoc(doc(db, 'submissions', `${auth.currentUser.uid}_${courseId}_${blockId}`), subData);
-      setSubmissions(prev => ({ ...prev, [blockId]: subData }));
-      setLinkInput('');
-      setEditingSubmission(null);
-
-      // Check if section is now complete
-      await checkSectionComplete(blockId);
-
-    } catch (err) {
-      console.error('Error submitting link:', err);
-    }
-  };
-
-  const startEditingSubmission = (blockId, currentLink) => {
-    if (!hasActiveSubscription) return;
-    setEditingSubmission(blockId);
-    setLinkInput(currentLink);
-  };
-
-  // Peer review handler
-  const handleSubmitReview = async (submissionId, grade, comment) => {
-    if (!hasActiveSubscription) return;
-    const reviewData = {
-      grade,
-      comment,
-      reviewerId: auth.currentUser.uid,
-      submissionId,
-      reviewedAt: new Date()
-    };
-    try {
-      await setDoc(doc(db, 'reviews', `${submissionId}_${auth.currentUser.uid}`), reviewData);
-      setReviews(prev => ({ ...prev, [submissionId]: reviewData }));
-    } catch (err) {
-      console.error('Error submitting review:', err);
-    }
-  };
-
-  // Component: Content Block Renderer
-  const ContentBlock = ({ block }) => {
-    if (!hasActiveSubscription) {
-      return (
-        <div className="relative">
-          <div className="blur-sm pointer-events-none opacity-40">
-            {renderBlockContent(block)}
-          </div>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-xl border-2 border-indigo-200">
-              <Lock className="w-8 h-8 text-indigo-600 mx-auto mb-2" />
-              <p className="text-gray-700 font-semibold text-sm">Subscribe to unlock</p>
-            </div>
-          </div>
-        </div>
-      );
-    }
-    return renderBlockContent(block);
-  };
-
-  // Render different block types
-  const renderBlockContent = (block) => {
-    switch (block.type) {
-      case 'heading':
-        const HeadingTag = `h${block.level || 2}`;
-        return (
-          <HeadingTag className={`font-bold text-gray-900 mb-3 ${
-            block.level === 1 ? 'text-xl' :
-            block.level === 2 ? 'text-lg' :
-            block.level === 3 ? 'text-base' :
-            'text-sm'
-          }`}>
-            {block.text}
-          </HeadingTag>
-        );
-      
-      case 'paragraph':
-        return (
-          <p className="text-gray-700 leading-relaxed mb-4 text-sm">
-            {block.text}
-          </p>
-        );
-      
-      case 'video':
-        const embedUrl = getYouTubeEmbedUrl(block.url);
-        return (
-          <div className="mb-6">
-            {block.title && (
-              <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center gap-2">
-                <Play className="w-4 h-4 text-red-600" />
-                {block.title}
-              </h4>
-            )}
-            {embedUrl ? (
-              <div className="max-w-md mx-auto">
-                <div className="aspect-video rounded-lg overflow-hidden shadow border border-gray-200">
-                  <iframe
-                    src={embedUrl}
-                    className="w-full h-full"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  ></iframe>
-                </div>
-              </div>
-            ) : (
-              <div className="max-w-md mx-auto">
-                <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center border border-gray-200">
-                  <p className="text-gray-500 text-xs">Invalid video URL</p>
-                </div>
-              </div>
-            )}
-            {block.description && (
-              <p className="text-gray-600 mt-2 text-xs text-center">{block.description}</p>
-            )}
-          </div>
-        );
-      
-      case 'list':
-        const ListTag = block.ordered ? 'ol' : 'ul';
-        return (
-          <ListTag className={`mb-4 ml-6 space-y-1 ${block.ordered ? 'list-decimal' : 'list-disc'}`}>
-            {(block.items || []).map((item, idx) => (
-              <li key={idx} className="text-gray-700 text-sm leading-relaxed">
-                {item}
-              </li>
-            ))}
-          </ListTag>
-        );
-      
-      case 'link':
-        return (
-          <a
-            href={block.url}
-            target={block.openNewTab ? '_blank' : '_self'}
-            rel={block.openNewTab ? 'noopener noreferrer' : ''}
-            className="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-700 font-medium text-sm mb-4 hover:underline"
-          >
-            {block.text}
-            {block.openNewTab && <span className="text-xs">↗</span>}
-          </a>
-        );
-      
-      case 'assignment':
-        return <AssignmentBlock block={block} />;
-      
-      case 'quiz':
-        return <QuizBlock block={block} />;
-      
-      case 'image':
-        return (
-          <div className="mb-6">
-            <img
-              src={block.url}
-              alt={block.alt || ''}
-              className="max-w-full rounded-lg shadow border border-gray-200"
-            />
-            {block.caption && (
-              <p className="text-center text-gray-600 mt-2 italic text-xs">{block.caption}</p>
-            )}
-          </div>
-        );
-      
-      case 'code':
-        return (
-          <div className="mb-6">
-            <pre className="bg-gray-800 text-white p-3 rounded-lg overflow-x-auto font-mono text-xs">
-              <code>{block.text}</code>
-            </pre>
-          </div>
-        );
-      
-      default:
-        return null;
-    }
-  };
-
-  // Component: Assignment Block
-  const AssignmentBlock = ({ block }) => {
-    const submission = submissions[block.id];
-    const isEditing = editingSubmission === block.id;
-    
-    return (
-      <div className="bg-orange-50 border-l-4 border-orange-500 rounded-lg p-4 mb-4">
-        <div className="flex items-start gap-2">
-          <FileText className="w-4 h-4 text-orange-600 mt-1 flex-shrink-0" />
-          <div className="flex-1">
-            <h4 className="text-sm font-bold text-gray-900 mb-2">
-              {block.title || 'Assignment'}
-            </h4>
-            <p className="text-gray-700 mb-2 leading-relaxed text-xs">{block.description}</p>
-            <div className="flex items-center gap-3 text-xs text-gray-600 mb-3">
-              {block.dueDate && (
-                <span className="flex items-center gap-1">
-                  <Clock className="w-3 h-3" />
-                  Due: {new Date(block.dueDate).toLocaleDateString()}
-                </span>
-              )}
-              {block.points && (
-                <span className="flex items-center gap-1">
-                  <Award className="w-3 h-3" />
-                  {block.points} points
-                </span>
-              )}
-            </div>
-            {block.submissionType === 'link' && (
-              <div className="mt-3">
-                {submission?.link ? (
-                  <div className="bg-white p-3 rounded-lg border border-gray-200">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="font-medium text-gray-700 text-xs">Submitted:</span>
-                      <button
-                        onClick={() => startEditingSubmission(block.id, submission.link)}
-                        className="flex items-center gap-1 text-indigo-600 hover:text-indigo-700 text-xs"
-                      >
-                        <Edit2 className="w-3 h-3" /> Edit
-                      </button>
-                    </div>
-                    <a href={submission.link} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline break-all text-xs">
-                      {submission.link}
-                    </a>
-                    {submission.submittedAt && (
-                      <p className="text-xs text-gray-500 mt-1">
-                        {new Date(submission.submittedAt).toLocaleString()}
-                      </p>
-                    )}
-                  </div>
-                ) : (
-                  <div className="text-gray-600 mb-2 text-xs">Submit your work below</div>
-                )}
-                {(isEditing || !submission?.link) && (
-                  <div className="flex gap-2 mt-2">
-                    <input
-                      type="url"
-                      value={linkInput}
-                      onChange={(e) => setLinkInput(e.target.value)}
-                      placeholder="https://example.com/your-work"
-                      className="flex-1 px-3 py-2 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                    />
-                    <button
-                      onClick={() => handleSubmitLink(block.id)}
-                      disabled={!linkInput}
-                      className="flex items-center gap-1 px-3 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 text-xs"
-                    >
-                      <Send className="w-3 h-3" />
-                      {isEditing ? 'Update' : 'Submit'}
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  // Component: Quiz Block
-  const QuizBlock = ({ block }) => {
-    if (!Array.isArray(block.questions) || block.questions.length === 0) {
-      return <div className="text-gray-500 text-xs mb-4">No questions available</div>;
-    }
-
-    const questionsState = quizStates[block.id]?.questions || [];
-    const quizScore = quizStates[block.id]?.score;
-    const allSubmitted = questionsState.length > 0 && questionsState.every(q => q.submitted);
-    const allAnswered = questionsState.length > 0 && questionsState.every(q => q.selected !== null);
-    const canSubmit = !allSubmitted && allAnswered;
-    const passed = quizScore !== null && quizScore !== undefined && quizScore >= 70;
-
-    return (
-      <div className="space-y-4 mb-6">
-        {block.questions.map((q, qIdx) => {
-          const state = questionsState[qIdx] || { selected: null, submitted: false };
-          const selectedAnswer = state.selected;
-
-          return (
-            <div key={qIdx} className="bg-blue-50 border-l-4 border-blue-500 rounded-lg p-3">
-              <h4 className="text-sm font-semibold text-gray-900 mb-3">
-                {q.question}
-              </h4>
-              <div className="space-y-2">
-                {(q.options || []).map((option, idx) => (
-                  <div
-                    key={idx}
-                    onClick={() => !allSubmitted && handleQuizSelect(block.id, qIdx, idx)}
-                    className={`bg-white p-2 rounded border flex items-center gap-2 cursor-pointer transition-all text-xs ${
-                      !allSubmitted && selectedAnswer === idx
-                        ? 'border-blue-500 bg-blue-50'
-                        : 'border-gray-200 hover:border-blue-300'
-                    } ${allSubmitted ? 'cursor-not-allowed opacity-75' : ''}`}
-                  >
-                    <div className={`w-3 h-3 rounded-full border-2 flex-shrink-0 ${
-                      selectedAnswer === idx ? 'bg-blue-600 border-blue-600' : 'border-gray-400'
-                    }`}></div>
-                    <span className="text-gray-700">{option}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          );
-        })}
-
-        {/* Quiz Results and Actions */}
-        {allSubmitted && quizScore !== null && quizScore !== undefined && (
-          <div className={`p-3 rounded-lg text-xs ${
-            passed ? 'bg-green-50 border border-green-200' : 'bg-orange-50 border border-orange-200'
-          }`}>
-            {passed ? (
-              <div>
-                <p className="font-bold text-green-800 mb-1">✓ Passed! You scored {quizScore}%</p>
-                <p className="text-green-700">Great job! You can retry to improve your score.</p>
-              </div>
-            ) : (
-              <div>
-                <p className="font-bold text-orange-800 mb-1">Not passed yet. You scored {quizScore}%</p>
-                <p className="text-orange-700">You need 70% to pass. Try again!</p>
-              </div>
-            )}
-            <button
-              onClick={() => handleRetryQuiz(block.id)}
-              className="mt-2 flex items-center gap-1 px-3 py-1.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-xs"
-            >
-              <RotateCcw className="w-3 h-3" />
-              Retry Quiz
-            </button>
-          </div>
-        )}
-
-        {/* Submit Button */}
-        {!allSubmitted && (
-          <button
-            onClick={() => handleSubmitQuiz(block.id)}
-            disabled={!canSubmit}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-          >
-            Submit Quiz
-          </button>
-        )}
-      </div>
-    );
-  };
-
-  // Component: Sidebar
-  const Sidebar = () => (
-    <aside className={`${showSidebar ? 'translate-x-0' : '-translate-x-full'} fixed top-14 left-0 h-[calc(100vh-3.5rem)] w-80 bg-white border-r border-gray-200 z-30 transition-transform duration-300 flex flex-col shadow-lg`}>
-      {/* Sidebar Header */}
-      <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
-        <div className="flex items-center justify-between mb-2">
-          <h2 className="text-base font-bold">Course Content</h2>
-          <button
-            onClick={() => setShowSidebar(false)}
-            className="text-white hover:opacity-80"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-      </div>
-
-      {/* Weeks List */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-2">
-        {course.weeks.map((week, weekIdx) => (
-          <div key={week.id} className="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-100">
-            <button
-              onClick={() => toggleWeek(week.id)}
-              className="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 transition"
-            >
-              <div className="flex items-center gap-2">
-                <BookOpen className="w-3 h-3 text-indigo-600" />
-                <h3 className="font-semibold text-gray-900 text-xs">{week.title}</h3>
-              </div>
-              <ChevronDown className={`w-3 h-3 text-gray-600 transition-transform ${expandedWeeks[week.id] ? 'rotate-180' : ''}`} />
-            </button>
-            {expandedWeeks[week.id] && (
-              <div className="space-y-0.5 p-1.5">
-                {week.sections.map((section, sectionIdx) => {
-                  const isActive = weekIdx === currentWeekIndex && sectionIdx === currentSectionIndex && activeTab === 'content';
-                  const isCompleted = isSectionCompleted(week.id, section.id);
-                  return (
-                    <button
-                      key={section.id}
-                      onClick={() => {
-                        setActiveTab('content');
-                        setCurrentWeekIndex(weekIdx);
-                        setCurrentSectionIndex(sectionIdx);
-                        setShowSidebar(false);
-                      }}
-                      className={`w-full text-left px-2 py-1.5 rounded transition-all flex items-center gap-2 text-xs ${
-                        isActive
-                          ? 'bg-indigo-100 text-indigo-900 font-medium'
-                          : 'text-gray-700 hover:bg-gray-100'
-                      }`}
-                    >
-                      {isCompleted ? (
-                        <CheckCircle className="w-3 h-3 text-green-600 flex-shrink-0" />
-                      ) : (
-                        <Circle className="w-3 h-3 text-gray-400 flex-shrink-0" />
-                      )}
-                      <span className="flex-1 truncate">{section.title}</span>
-                    </button>
-                  );
-                })}
-                <button
-                  onClick={() => {
-                    setActiveTab('peer');
-                    setPeerWeekIndex(weekIdx);
-                    setShowSidebar(false);
-                  }}
-                  className={`w-full text-left px-2 py-1.5 rounded transition-all flex items-center gap-2 text-xs ${
-                    activeTab === 'peer' && peerWeekIndex === weekIdx
-                      ? 'bg-indigo-100 text-indigo-900 font-medium'
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  <Circle className="w-3 h-3 text-gray-400 flex-shrink-0" />
-                  <span className="flex-1 truncate">Peer Review</span>
-                </button>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-
-      {/* Back to Dashboard */}
-      <div className="p-3 border-t border-gray-200">
-        <button
-          onClick={() => navigate('/ehub')}
-          className="w-full flex items-center justify-center gap-2 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-all font-medium text-sm"
-        >
-          <Home className="w-4 h-4" />
-          Back to Dashboard
-        </button>
-      </div>
-    </aside>
-  );
-
-  // Component: Peer Review View
-  const PeerReviewView = () => (
-    <div className="bg-white rounded-2xl shadow-lg p-6">
-      <h2 className="text-lg font-bold mb-4">Peer Review: {course.weeks[peerWeekIndex].title}</h2>
-      <p className="mb-4 text-gray-600 text-sm">Review your peers' submissions and provide constructive feedback.</p>
-      {assignmentsByWeek[course.weeks[peerWeekIndex].id]?.length > 0 ? (
-        assignmentsByWeek[course.weeks[peerWeekIndex].id].map(blockId => (
-          <div key={blockId} className="mb-6 border-b pb-6">
-            <h3 className="text-base font-semibold mb-3">
-              Assignment: {course.weeks[peerWeekIndex].sections.flatMap(s => s.content.find(b => b.id === blockId)?.title || 'Untitled')}
-            </h3>
-            {peerSubmissions[course.weeks[peerWeekIndex].id]?.filter(sub => sub.blockId === blockId).map(sub => {
-              const submissionId = sub.submissionId;
-              const review = reviews[submissionId];
-              return (
-                <div key={submissionId} className="bg-gray-50 p-4 rounded-lg mb-3">
-                  <p className="font-medium text-sm">
-                    Submitted Link: <a href={sub.link} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline break-all">{sub.link}</a>
-                  </p>
-                  <p className="text-xs text-gray-500">Submitted by: Anonymous Peer</p>
-                  {review ? (
-                    <div className="mt-2">
-                      <p className="text-green-600 text-sm">✓ Reviewed: Grade {review.grade}/10</p>
-                      <p className="text-gray-600 text-sm">Comment: {review.comment}</p>
-                    </div>
-                  ) : (
-                    <div className="mt-3">
-                      <label className="block text-xs font-medium mb-1">Grade (0-10)</label>
-                      <input type="number" min="0" max="10" className="w-20 px-2 py-1 text-sm border rounded" id={`grade-${submissionId}`} />
-                      <label className="block text-xs font-medium mt-2 mb-1">Comment</label>
-                      <textarea className="w-full px-2 py-1 text-sm border rounded" id={`comment-${submissionId}`} rows="2"></textarea>
-                      <button
-                        onClick={() => {
-                          const grade = parseInt(document.getElementById(`grade-${submissionId}`).value);
-                          const comment = document.getElementById(`comment-${submissionId}`).value;
-                          if (grade >= 0 && grade <= 10) {
-                            handleSubmitReview(submissionId, grade, comment);
-                          }
-                        }}
-                        className="mt-2 px-3 py-1 bg-indigo-600 text-white text-sm rounded hover:bg-indigo-700"
-                      >
-                        Submit Review
-                      </button>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        ))
-      ) : (
-        <p className="text-gray-500 text-sm">No assignments for peer review in this week.</p>
-      )}
-    </div>
-  );
-
-  // Component: Paywall Screen
-  const PaywallScreen = () => (
-    <div className="min-h-screen flex items-center justify-center p-4" style={{background: 'linear-gradient(to bottom, #a5b4fc, #e0e7ff)'}}>
-      <div className="max-w-2xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden">
-        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-8 text-white text-center">
-          <Lock className="w-16 h-16 mx-auto mb-4" />
-          <h1 className="text-3xl font-bold mb-2">Unlock Full Access</h1>
-          <p className="text-indigo-100">Subscribe to access all courses and features</p>
-        </div>
-        <div className="p-8">
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">What You'll Get:</h2>
-            <div className="space-y-3">
-              {[
-                'Full access to all course content',
-                'Interactive quizzes and assignments',
-                'Peer review and collaboration',
-                'Track your progress and earn certificates',
-                'Priority support from instructors'
-              ].map((benefit, idx) => (
-                <div key={idx} className="flex items-center gap-3">
-                  <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <CheckCircle className="w-4 h-4 text-green-600" />
-                  </div>
-                  <span className="text-gray-700">{benefit}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-6 mb-6">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-xl font-bold text-gray-900">Monthly Plan</h3>
-              <div className="text-right">
-                <div className="text-3xl font-bold text-indigo-600">KES 1,700</div>
-                <div className="text-sm text-gray-600">per month</div>
-              </div>
-            </div>
-            <p className="text-gray-600 text-sm">Access all courses for 30 days</p>
-          </div>
-          <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-6 mb-8 border-2 border-purple-200">
-            <div className="flex items-center gap-2 mb-2">
-              <Zap className="w-5 h-5 text-purple-600" />
-              <h3 className="text-xl font-bold text-gray-900">3-Month Plan</h3>
-              <span className="bg-purple-600 text-white text-xs px-2 py-1 rounded-full font-bold">SAVE KES 100</span>
-            </div>
-            <div className="flex items-center justify-between mb-2">
-              <div className="text-3xl font-bold text-purple-600">KES 5,000</div>
-              <div className="text-sm text-gray-500">
-                <span className="line-through">KES 5,100</span>
-              </div>
-            </div>
-            <p className="text-gray-600 text-sm">Access all courses for 90 days</p>
-          </div>
-          <button
-            onClick={() => navigate('/settings')}
-            className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 rounded-full font-bold text-lg hover:shadow-lg transition-all flex items-center justify-center gap-2"
-          >
-            <CreditCard className="w-5 h-5" />
-            Choose Your Plan
-          </button>
-          <button
-            onClick={() => navigate('/ehub')}
-            className="w-full mt-3 text-gray-600 hover:text-gray-900 font-medium py-2"
-          >
-            Back to Dashboard
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-
-  // Loading state
+  // ==================== RENDER CONDITIONS ====================
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{background: 'linear-gradient(to bottom, #a5b4fc, #e0e7ff)'}}>
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-lg text-gray-600">Loading course...</p>
-        </div>
-      </div>
-    );
+    return <LoadingState />;
   }
 
-  // Show paywall if no subscription
   if (subscriptionChecked && !hasActiveSubscription) {
     return <PaywallScreen />;
   }
 
-  // Error state
   if (error || !course) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-4" style={{background: 'linear-gradient(to bottom, #a5b4fc, #e0e7ff)'}}>
-        <div className="text-center bg-white p-8 rounded-2xl shadow-lg max-w-md">
-          <p className="text-red-600 text-lg font-semibold mb-4">
-            {error || 'Course not found'}
-          </p>
-          <button
-            onClick={() => navigate('/ehub')}
-            className="px-6 py-3 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 font-medium"
-          >
-            Back to Dashboard
-          </button>
-        </div>
-      </div>
-    );
+    return <ErrorState error={error} />;
   }
 
+  // ==================== MAIN RENDER ====================
   const currentWeek = course.weeks[currentWeekIndex];
   const currentSection = currentWeek?.sections[currentSectionIndex];
   const hasNext = currentSectionIndex < currentWeek?.sections.length - 1 || currentWeekIndex < course.weeks.length - 1;
   const hasPrevious = currentSectionIndex > 0 || currentWeekIndex > 0;
 
   return (
-    <div className="min-h-screen flex flex-col" style={{background: 'linear-gradient(to bottom, #a5b4fc, #e0e7ff)'}}>
-      {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-14">
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setShowSidebar(!showSidebar)}
-                className="text-gray-600 hover:text-gray-900"
-              >
-                <Menu className="w-5 h-5" />
-              </button>
-              <div>
-                <h1 className="text-base font-bold text-gray-900">{course.title}</h1>
-                <p className="text-xs text-gray-500">
-                  {activeTab === 'content' ? `${currentWeek?.title} - ${currentSection?.title}` : 'Peer Review'}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
+    <div className="min-h-screen flex flex-col bg-white">
+      <CourseHeader
+        course={course}
+        currentWeek={currentWeek}
+        currentSection={currentSection}
+        completedSections={completedSections}
+        showSidebar={showSidebar}
+        setShowSidebar={setShowSidebar}
+      />
+      
       <div className="flex flex-1">
-        {/* Sidebar Component */}
-        <Sidebar />
-
-        {/* Overlay for mobile only */}
+        <CourseSidebar
+          course={course}
+          cohort={cohort}
+          showSidebar={showSidebar}
+          setShowSidebar={setShowSidebar}
+          expandedWeeks={expandedWeeks}
+          toggleWeek={toggleWeek}
+          currentWeekIndex={currentWeekIndex}
+          currentSectionIndex={currentSectionIndex}
+          completedSections={completedSections}
+          goToSection={goToSection}
+          onOpenSettings={() => setShowSettings(true)}
+          onOpenNotifications={() => setShowNotifications(true)}
+        />
+        
         {showSidebar && (
-          <div 
-            className="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden"
+          <div
+            className="fixed inset-0 bg-black bg-opacity-30 z-40 lg:hidden"
             onClick={() => setShowSidebar(false)}
-          ></div>
+          />
         )}
-
-        {/* Main Content */}
-        <main className={`flex-1 transition-all duration-300 ${showSidebar ? 'ml-80' : 'ml-0'}`}>
-          <div className="h-full overflow-y-auto">
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-              {activeTab === 'content' ? (
-                <>
-                  {currentSection?.content?.length > 0 ? (
-                    <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
-                      {currentSection.content.map((block) => (
-                        <ContentBlock key={block.id} block={block} />
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-12 bg-white rounded-2xl shadow-lg">
-                      <p className="text-gray-500 text-sm">No content available for this section yet.</p>
-                    </div>
-                  )}
-
-                  {/* Navigation Buttons */}
-                  <div className="flex items-center justify-between">
-                    <button
-                      onClick={goToPreviousSection}
-                      disabled={!hasPrevious}
-                      className="px-6 py-3 bg-white border-2 border-black text-gray-900 rounded-full font-medium hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                    >
-                      <ChevronLeft className="w-4 h-4" />
-                      Previous
-                    </button>
-                    <button
-                      onClick={goToNextSection}
-                      disabled={!hasNext}
-                      className="px-6 py-3 bg-black text-white rounded-full font-medium hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                    >
-                      Next
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <PeerReviewView />
+        
+        <main className={`flex-1 transition-all duration-300 ${showSidebar ? 'lg:ml-80' : 'ml-0'}`}>
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div className="mb-4">
+              <h2 className="text-2xl font-bold text-gray-900 mb-1">{currentSection?.title}</h2>
+              {currentSection?.description && (
+                <p className="text-gray-600 text-base">{currentSection.description}</p>
               )}
             </div>
+            
+            <div className="bg-white rounded-lg shadow-md p-6 mb-6 border border-gray-200">
+              {currentSection?.content?.length > 0 ? (
+                currentSection.content.map((block) => (
+                  <ContentRenderer
+                    key={block.id}
+                    block={block}
+                    weekId={currentWeek.id}
+                    sectionId={currentSection.id}
+                    hasActiveSubscription={hasActiveSubscription}
+                    submissions={submissions}
+                    uploadingFile={uploadingFile}
+                    quizResults={quizResults}
+                    courseId={courseId}
+                    onTextSubmit={handleTextSubmission}
+                    onFileUpload={handleFileUpload}
+                    onUrlSubmit={handleUrlSubmission}
+                    onQuizComplete={(quizId, result) => {
+                      handleQuizComplete(quizId, result);
+                      checkAndMarkSectionComplete(currentWeek.id, currentSection.id);
+                    }}
+                  />
+                ))
+              ) : (
+                <div className="text-center py-8">
+                  <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                  <p className="text-gray-500 text-base">No content available for this section yet.</p>
+                </div>
+              )}
+            </div>
+            
+            <NavigationButtons
+              hasPrevious={hasPrevious}
+              hasNext={hasNext}
+              onPrevious={goToPreviousSection}
+              onNext={goToNextSection}
+            />
           </div>
         </main>
       </div>
+
+      {/* Settings Modal */}
+      <Settings isOpen={showSettings} onClose={() => setShowSettings(false)} />
+      
+      {/* Notifications Modal */}
+      <Notifications isOpen={showNotifications} onClose={() => setShowNotifications(false)} />
     </div>
   );
 }

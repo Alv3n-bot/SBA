@@ -1,0 +1,302 @@
+{
+  "full-stack": {
+    "id": "full-stack",
+    "title": "Full-Stack Development Software Engineering",
+    "subtitle": "Become a job-ready software engineer with comprehensive full-stack skills",
+    "description": "Become a job-ready software engineer by learning full-stack web development. Master HTML, CSS, JavaScript, React, Node.js, databases, APIs, and Git while building real-world projects and a professional portfolio.",
+    "duration": "24 Weeks",
+    "level": "Beginner to Intermediate",
+    "isOpen": true,
+    "startDate": "March 2, 2026",
+    "price": "Free",
+    "videoId": "TYxtWnFNkDw",
+    "image": "https://img-c.udemycdn.com/course/750x422/1565838_e54e_18.jpg",
+    "whatYouWillLearn": [
+      "Front-end development with HTML, CSS, and JavaScript",
+      "Back-end development with Node.js and Express",
+      "Database management with SQL and MongoDB",
+      "API development and integration",
+      "Version control with Git and GitHub",
+      "Building responsive web applications",
+      "Deployment and DevOps basics",
+      "Portfolio development and job search strategies"
+    ],
+    "curriculum": [
+      {
+        "module": "Module 1: Front-End Fundamentals",
+        "topics": ["HTML5 and semantics", "CSS3 and responsive design", "JavaScript basics", "DOM manipulation"]
+      },
+      {
+        "module": "Module 2: Advanced Front-End",
+        "topics": ["React.js components", "State management", "Routing and hooks", "UI libraries"]
+      },
+      {
+        "module": "Module 3: Back-End Development",
+        "topics": ["Node.js runtime", "Express framework", "RESTful APIs", "Authentication"]
+      },
+      {
+        "module": "Module 4: Databases and Deployment",
+        "topics": ["SQL and NoSQL databases", "ORMs", "Cloud deployment", "CI/CD pipelines"]
+      },
+      {
+        "module": "Module 5: Capstone Project",
+        "topics": ["Full-stack application building", "Testing and optimization", "Portfolio presentation"]
+      }
+    ],
+    "prerequisites": "Basic computer skills. No prior coding experience required.",
+    "instructor": {
+      "name": "Dr. Elena Ramirez",
+      "title": "Senior Full-Stack Engineer",
+      "bio": "15+ years in software engineering, with experience at top tech firms like Google and Amazon.",
+      "image": "https://news.lehigh.edu/sites/news/files/2025-12/FourQuestions-ShalineeKishore-LehighUniversity-main.jpg"
+    },
+    "features": [
+      "Hands-on projects and coding exercises",
+      "Live mentorship sessions",
+      "Code reviews from industry experts",
+      "Job placement support",
+      "Access to employer network",
+      "Certificate of completion"
+    ]
+  },
+  "data-science": {
+    "id": "data-science",
+    "title": "Data Science & Analytics Bootcamp",
+    "subtitle": "Transform data into actionable insights for business decisions",
+    "description": "Learn data analysis, Python, SQL, statistics, and data visualization to launch a career in data analytics or junior data science. Work with real datasets and build data-driven projects used in real businesses.",
+    "duration": "20 Weeks",
+    "level": "Beginner",
+    "isOpen": true,
+    "startDate": "March 2, 2026",
+    "price": "Free",
+    "videoId": "PSNXoAs2FtQ",
+    "image": "https://engineering.nyu.edu/sites/default/files/styles/content_header_default_1x/public/2022-02/Data%20Science%20Bootcamp%20%281%29.jpg?h=2f83cd36&itok=qIg5KFwK",
+    "whatYouWillLearn": [
+      "Python programming for data analysis",
+      "SQL for database querying",
+      "Statistical analysis and hypothesis testing",
+      "Data visualization with Tableau and Power BI",
+      "Machine learning basics",
+      "Data cleaning and preprocessing",
+      "Building interactive dashboards",
+      "Real-world data projects"
+    ],
+    "curriculum": [
+      {
+        "module": "Module 1: Data Fundamentals",
+        "topics": ["Introduction to data science", "Python basics", "Data types and structures", "Libraries: NumPy, Pandas"]
+      },
+      {
+        "module": "Module 2: Data Querying and Analysis",
+        "topics": ["SQL fundamentals", "Joins and aggregations", "Statistical concepts", "Exploratory data analysis"]
+      },
+      {
+        "module": "Module 3: Visualization and Reporting",
+        "topics": ["Matplotlib and Seaborn", "Tableau dashboards", "Power BI reports", "Storytelling with data"]
+      },
+      {
+        "module": "Module 4: Advanced Topics",
+        "topics": ["Intro to machine learning", "Regression and classification", "Data ethics", "Big data basics"]
+      },
+      {
+        "module": "Module 5: Capstone Project",
+        "topics": ["End-to-end data project", "Presentation skills", "Portfolio building"]
+      }
+    ],
+    "prerequisites": "Basic math skills. No programming experience required.",
+    "instructor": {
+      "name": "Marcus Chen",
+      "title": "Data Science Lead",
+      "bio": "10+ years in data analytics, previously at Facebook and consulting firms.",
+      "image": "https://hsph.harvard.edu/wp-content/uploads/2025/06/Nikhil_Vytla_2000x1125.jpg"
+    },
+    "features": [
+      "Real datasets from industry partners",
+      "Interactive coding sessions",
+      "Project feedback",
+      "Career coaching",
+      "Networking events",
+      "Certificate of completion"
+    ]
+  },
+  "ai-ml": {
+    "id": "ai-ml",
+    "title": "Artificial Intelligence & Machine Learning Bootcamp",
+    "subtitle": "Build intelligent systems with cutting-edge AI technologies",
+    "description": "Build a strong foundation in artificial intelligence and machine learning. Learn Python, data preprocessing, machine learning models, and applied AI techniques while developing practical, portfolio-ready AI projects.",
+    "duration": "24 Weeks",
+    "level": "Intermediate",
+    "isOpen": true,
+    "startDate": "March 2, 2026",
+    "price": "Free",
+    "videoId": "azJ_OdfQ4rM",
+    "image": "https://pace.uno.edu/wp-content/uploads/2023/01/GES3045-AI-Machine-Learning-Bootcamp-935x572-1.webp",
+    "whatYouWillLearn": [
+      "Python for AI and ML",
+      "Data preprocessing and feature engineering",
+      "Supervised and unsupervised learning",
+      "Neural networks and deep learning",
+      "Natural language processing basics",
+      "Computer vision fundamentals",
+      "Model deployment and MLOps",
+      "Ethical AI considerations"
+    ],
+    "curriculum": [
+      {
+        "module": "Module 1: AI Foundations",
+        "topics": ["Python advanced", "Math for ML", "Data handling", "Scikit-learn intro"]
+      },
+      {
+        "module": "Module 2: Machine Learning Models",
+        "topics": ["Regression algorithms", "Classification", "Clustering", "Model evaluation"]
+      },
+      {
+        "module": "Module 3: Deep Learning",
+        "topics": ["Neural networks", "TensorFlow/Keras", "CNNs", "RNNs"]
+      },
+      {
+        "module": "Module 4: Advanced AI",
+        "topics": ["NLP with transformers", "Computer vision", "Reinforcement learning", "Generative AI"]
+      },
+      {
+        "module": "Module 5: Projects and Deployment",
+        "topics": ["AI project development", "Model serving", "Cloud AI services"]
+      }
+    ],
+    "prerequisites": "Basic Python knowledge. Math background recommended.",
+    "instructor": {
+      "name": "Sophia Patel",
+      "title": "AI Research Specialist",
+      "bio": "PhD in AI with 8+ years in machine learning research and application.",
+      "image": "https://www.luc.edu/media/lucedu/scps/images/Chris%20Fulton%20Impact%20Report.jpg"
+    },
+    "features": [
+      "AI project labs",
+      "Guest lectures from AI experts",
+      "Model building workshops",
+      "Ethics discussions",
+      "Job placement assistance",
+      "Certificate of completion"
+    ]
+  },
+  "cybersecurity": {
+    "id": "cybersecurity",
+    "title": "Cybersecurity & Ethical Hacking Bootcamp",
+    "subtitle": "Protect digital assets and identify vulnerabilities",
+    "description": "Start a career in cybersecurity by learning network security, ethical hacking, threat analysis, and defensive security practices. Gain hands-on experience through labs, simulations, and real-world security scenarios.",
+    "duration": "18 Weeks",
+    "level": "Beginner",
+    "isOpen": true,
+    "startDate": "March 2, 2026",
+    "price": "Free",
+    "videoId": "bydCaQhDSDA",
+    "image": "https://www.kaeeducation.com/wp-content/uploads/2025/01/Cuber-Security-Ethical-Hacking-Bootcamp.png",
+    "whatYouWillLearn": [
+      "Network security fundamentals",
+      "Ethical hacking techniques",
+      "Vulnerability assessment",
+      "Incident response and forensics",
+      "Cryptography basics",
+      "Web application security",
+      "Cloud security",
+      "Compliance and risk management"
+    ],
+    "curriculum": [
+      {
+        "module": "Module 1: Security Basics",
+        "topics": ["Cyber threats overview", "Network fundamentals", "OS security", "Access control"]
+      },
+      {
+        "module": "Module 2: Ethical Hacking",
+        "topics": ["Penetration testing", "Scanning tools", "Exploitation", "Post-exploitation"]
+      },
+      {
+        "module": "Module 3: Defensive Security",
+        "topics": ["Firewalls and IDS", "SIEM systems", "Incident response", "Forensics"]
+      },
+      {
+        "module": "Module 4: Advanced Topics",
+        "topics": ["Web security", "Mobile security", "IoT security", "Cloud security"]
+      },
+      {
+        "module": "Module 5: Certification Prep",
+        "topics": ["CompTIA Security+", "Ethical hacker cert", "Capstone simulation"]
+      }
+    ],
+    "prerequisites": "Basic IT knowledge. No security experience required.",
+    "instructor": {
+      "name": "James Kowalski",
+      "title": "Cybersecurity Expert",
+      "bio": "Certified ethical hacker with 12+ years in infosec, former NSA consultant.",
+      "image": "https://news.mit.edu/sites/default/files/styles/term_page__news_article/public/images/202512/mit-csc-2025-27.jpg?itok=4VO6INvh"
+    },
+    "features": [
+      "Hands-on hacking labs",
+      "Capture the Flag challenges",
+      "Security tool training",
+      "Certification preparation",
+      "Industry certifications discount",
+      "Certificate of completion"
+    ]
+  },
+  "ux-ui-design": {
+    "id": "ux-ui-design",
+    "title": "UX/UI & Product Design Bootcamp",
+    "subtitle": "Create user-centered digital products that delight",
+    "description": "Learn user experience and interface design principles, wireframing, prototyping, and product thinking. Build visually strong, user-centered designs and a professional UX/UI portfolio.",
+    "duration": "16 Weeks",
+    "level": "All Levels",
+    "isOpen": true,
+    "startDate": "March 2, 2026",
+    "price": "Free",
+    "videoId": "YmBsd80fMMY",
+    "image": "https://www.springboard.com/blog/wp-content/uploads/2023/10/best-uiux-bootcamps-700x525.png",
+    "whatYouWillLearn": [
+      "User research and personas",
+      "Wireframing and prototyping",
+      "UI design principles",
+      "UX writing and content strategy",
+      "Design tools like Figma and Adobe XD",
+      "Usability testing",
+      "Product management basics",
+      "Portfolio presentation"
+    ],
+    "curriculum": [
+      {
+        "module": "Module 1: Design Fundamentals",
+        "topics": ["Design principles", "Color theory", "Typography", "Layout basics"]
+      },
+      {
+        "module": "Module 2: User Experience",
+        "topics": ["User research", "Journey mapping", "Information architecture", "Wireframing"]
+      },
+      {
+        "module": "Module 3: User Interface",
+        "topics": ["Visual design", "Interaction design", "Prototyping", "Animation"]
+      },
+      {
+        "module": "Module 4: Product Design",
+        "topics": ["Agile methodologies", "A/B testing", "Accessibility", "Design systems"]
+      },
+      {
+        "module": "Module 5: Portfolio and Career",
+        "topics": ["Case studies", "Portfolio building", "Job search", "Freelancing"]
+      }
+    ],
+    "prerequisites": "No design experience required. Creativity encouraged.",
+    "instructor": {
+      "name": "Laura Fitzgerald",
+      "title": "Product Design Director",
+      "bio": "10+ years in UX/UI, designed products for Apple and startups.",
+      "image": "https://www.hmc.edu/academics/wp-content/uploads/sites/7/2024/09/faculty-2425.jpg"
+    },
+    "features": [
+      "Design projects with feedback",
+      "Tool mastery workshops",
+      "User testing sessions",
+      "Portfolio reviews",
+      "Industry connections",
+      "Certificate of completion"
+    ]
+  }
+}

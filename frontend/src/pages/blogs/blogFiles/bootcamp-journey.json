@@ -1,0 +1,99 @@
+{
+  "title": "From Zero to Developer: What to Expect from Your First Bootcamp",
+  "excerpt": "Starting a coding bootcamp can feel overwhelming. Here's an honest look at what the journey entails and how to set yourself up for success.",
+  "date": "2025-01-10",
+  "readTime": "8 min read",
+  "category": "Bootcamp Life",
+  "author": "SBA Team",
+  "image": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=450&fit=crop",
+  "content": [
+    {
+      "type": "paragraph",
+      "text": "Making the decision to join a coding bootcamp is a big step. Whether you're switching careers or just starting out, understanding what lies ahead can help you prepare mentally and practically for the journey."
+    },
+    {
+      "type": "heading",
+      "text": "Week 1-2: The Foundation Phase"
+    },
+    {
+      "type": "paragraph",
+      "text": "The first two weeks focus on building your foundation. You'll learn HTML, CSS, and JavaScript basics. It might feel slow at first, but this groundwork is crucial. Many students are tempted to rush through fundamentals, but trust the process."
+    },
+    {
+      "type": "paragraph",
+      "text": "Expect to spend 6-8 hours in class and another 3-4 hours on homework and practice. Yes, it's intense, but it's also when you'll see your first websites come to life."
+    },
+    {
+      "type": "heading",
+      "text": "Week 3-6: Building Momentum"
+    },
+    {
+      "type": "paragraph",
+      "text": "This is where things get exciting. You'll dive into frameworks, learn about backend development, and start connecting different pieces of the web development puzzle. The learning curve is steep, but you'll notice yourself thinking like a developer."
+    },
+    {
+      "type": "quote",
+      "text": "The moment you debug your first complex error on your own, you'll realize you're no longer a complete beginner."
+    },
+    {
+      "type": "heading",
+      "text": "Week 7-10: Project Phase"
+    },
+    {
+      "type": "paragraph",
+      "text": "Project weeks are both challenging and rewarding. You'll work on real-world applications, often in teams. This is where you learn collaboration, git workflows, and how to translate ideas into functioning code."
+    },
+    {
+      "type": "list",
+      "items": [
+        "Build a full-stack application from scratch",
+        "Work with APIs and databases",
+        "Practice agile methodologies",
+        "Present your work to peers and instructors"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Week 11-12: Career Prep and Polish"
+    },
+    {
+      "type": "paragraph",
+      "text": "The final weeks focus on career preparation. You'll polish your portfolio, practice technical interviews, and prepare for the job search. This is also when you'll add finishing touches to your capstone project—the centerpiece of your portfolio."
+    },
+    {
+      "type": "heading",
+      "text": "Tips for Success"
+    },
+    {
+      "type": "paragraph",
+      "text": "Success in a bootcamp isn't just about intelligence or prior experience. Here's what actually matters:"
+    },
+    {
+      "type": "list",
+      "items": [
+        "Show up every day, even when it's hard",
+        "Don't compare your progress to others—everyone learns differently",
+        "Ask questions early and often",
+        "Build things outside of assignments",
+        "Take care of your physical and mental health",
+        "Connect with your cohort—they'll be your support system"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "The Reality Check"
+    },
+    {
+      "type": "paragraph",
+      "text": "Let's be honest: bootcamps are challenging. You'll have moments of frustration, days when nothing seems to work, and times when imposter syndrome hits hard. This is normal. Every developer has been there."
+    },
+    {
+      "type": "paragraph",
+      "text": "But here's the beautiful part: on the other side of that struggle is capability you didn't know you had. Three months from now, you'll look back at week one and barely recognize that person. That's the power of intensive, focused learning."
+    },
+    {
+      "type": "paragraph",
+      "text": "At SBA, we've seen hundreds of students go through this journey. From complete beginners to confident developers ready to start their careers. The transformation is real, but it requires commitment, resilience, and a willingness to embrace the learning process in all its messy glory."
+    }
+  ]
+}

@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import logo192 from '../../../assets/favicon_io/android-chrome-192x192.png';
 
 function Header() {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -32,6 +34,11 @@ function Header() {
     setIsOpen(false);
   };
 
+  const handleContact = () => {
+    navigate('/contact');
+    setIsOpen(false);
+  };
+
   return (
     <>
       {/* Desktop Header - transparent with scroll effect */}
@@ -40,17 +47,16 @@ function Header() {
       }`}>
         <nav className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 py-3 flex items-center justify-between">
           <div className="flex items-center">
-            <img 
+            <img
               src={logo192}
-              alt="SBA Logo" 
+              alt="SBA Logo"
               className="w-12 h-12 cursor-pointer"
               onClick={handleHome}
             />
           </div>
-
           <ul className="flex items-center space-x-8">
             <li>
-              <button 
+              <button
                 onClick={handleHome}
                 className="text-gray-900 font-semibold hover:text-gray-600 transition-colors"
               >
@@ -58,23 +64,23 @@ function Header() {
               </button>
             </li>
             <li>
-              <button 
-                onClick={() => scrollToSection('courses')} 
+              <button
+                onClick={() => scrollToSection('courses')}
                 className="text-gray-900 font-semibold hover:text-gray-600 transition-colors"
               >
-                Courses
+                Programs
               </button>
             </li>
             <li>
-              <button 
-                onClick={() => scrollToSection('about')} 
+              <button
+                onClick={() => scrollToSection('about')}
                 className="text-gray-900 font-semibold hover:text-gray-600 transition-colors"
               >
                 About
               </button>
             </li>
             <li>
-              <button 
+              <button
                 onClick={() => scrollToSection('contact')}
                 className="text-gray-900 font-semibold hover:text-gray-600 transition-colors"
               >
@@ -82,8 +88,7 @@ function Header() {
               </button>
             </li>
           </ul>
-
-          <button 
+          <button
             onClick={handleLogin}
             className="bg-black text-white px-6 py-2 rounded-full font-bold hover:bg-gray-800 transition-colors"
           >
@@ -95,13 +100,12 @@ function Header() {
       {/* Mobile Header - simple white background, always visible */}
       <header className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white shadow-sm">
         <nav className="px-4 py-2 flex items-center justify-between">
-          <img 
+          <img
             src={logo192}
-            alt="SBA Logo" 
+            alt="SBA Logo"
             className="w-10 h-10"
             onClick={handleHome}
           />
-
           <button
             className="p-2"
             onClick={() => setIsOpen(!isOpen)}
@@ -113,12 +117,11 @@ function Header() {
             )}
           </button>
         </nav>
-
         {isOpen && (
           <div className="bg-white border-t border-gray-200">
             <ul className="flex flex-col px-4 py-3">
               <li>
-                <button 
+                <button
                   onClick={handleHome}
                   className="w-full text-left px-3 py-2 text-gray-900 font-semibold"
                 >
@@ -126,31 +129,31 @@ function Header() {
                 </button>
               </li>
               <li>
-                <button 
-                  onClick={() => scrollToSection('courses')} 
+                <button
+                  onClick={() => scrollToSection('courses')}
                   className="w-full text-left px-3 py-2 text-gray-900 font-semibold"
                 >
                   Courses
                 </button>
               </li>
               <li>
-                <button 
-                  onClick={() => scrollToSection('about')} 
+                <button
+                  onClick={() => scrollToSection('about')}
                   className="w-full text-left px-3 py-2 text-gray-900 font-semibold"
                 >
                   About
                 </button>
               </li>
               <li>
-                <button 
-                  onClick={() => scrollToSection('contact')}
+                <button
+                  onClick={handleBlog}
                   className="w-full text-left px-3 py-2 text-gray-900 font-semibold"
                 >
-                  Contact
+                  Blog
                 </button>
               </li>
               <li className="pt-2">
-                <button 
+                <button
                   onClick={handleLogin}
                   className="w-full bg-black text-white px-5 py-2 rounded-full font-bold"
                 >

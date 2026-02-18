@@ -6,9 +6,9 @@ import About from '../landing-page/components/About';
 import Footer from '../landing-page/components/Footer';
 import Settings from './Settings';
 import Notifications from './Notifications';
-import Programs from '../landing-page/components/Programs';
+import Programs from './Programs';
 import EHubHeader from './EHubHeader';
-
+import Contact from '../landing-page/components/Contact';
 export default function EHub() {
   const [user, setUser] = useState(null);
   const [userData, setUserData] = useState(null);
@@ -145,7 +145,7 @@ export default function EHub() {
       </section>
 
       <About />
-
+      <Contact />
       {/* Footer */}
       <Footer />
 

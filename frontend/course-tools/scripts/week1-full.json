@@ -1,0 +1,1906 @@
+{
+  "courseId": "fullstack-2026",
+  "courseTitle": "Full-Stack Software Engineering Course",
+  "courseDescription": "16-week intensive program to become a job-ready full-stack developer",
+  "weeks": [
+    {
+      "title": "Week 1: HTML & Web Fundamentals",
+      "description": "Master the structure of the web and create semantic HTML documents. Learn how the internet works, build accessible websites, and use developer tools effectively.",
+      "published": true,
+      "sections": [
+        {
+          "title": "Week 1 Introduction & Overview",
+          "description": "Welcome to Week 1! This week we focus on HTML - the foundation of all web pages",
+          "content": [
+            {
+              "type": "heading",
+              "level": 1,
+              "text": "Week 1: HTML & Web Fundamentals 🌐"
+            },
+            {
+              "type": "text",
+              "content": "Welcome to Week 1! This week, you'll learn HTML - the foundation of every website on the internet. HTML (HyperText Markup Language) defines the structure and content of web pages. By the end of this week, you'll build a complete multi-page personal portfolio website."
+            },
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "Week 1 Focus"
+            },
+            {
+              "type": "text",
+              "content": "Understanding the structure of the web and creating semantic, accessible HTML documents"
+            },
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "Learning Objectives"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Understand how the internet works (HTTP, DNS, browsers)",
+                "Write semantic HTML using appropriate tags",
+                "Create forms, tables, and embed media elements",
+                "Implement accessibility best practices (ARIA, alt text)",
+                "Use browser developer tools to debug HTML",
+                "Build a complete multi-page website from scratch"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "What You'll Build This Week"
+            },
+            {
+              "type": "text",
+              "content": "Personal Portfolio Landing Page (HTML only) - A professional 3-page website with:"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Home/About page with your introduction",
+                "Projects page showcasing your work",
+                "Contact page with a working form",
+                "Semantic HTML structure",
+                "Accessible navigation and content",
+                "Valid HTML that passes W3C validation"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "Time Commitment"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Video lessons: ~3 hours",
+                "Reading & practice: ~4 hours",
+                "Project work: ~8-10 hours",
+                "Total: 15-17 hours"
+              ]
+            },
+            {
+              "type": "text",
+              "content": "Let's get started! 🚀"
+            }
+          ]
+        },
+        {
+          "title": "Lesson 1: How the Internet Works",
+          "description": "Understanding HTTP, DNS, browsers, and client-server architecture",
+          "content": [
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "How the Internet Works"
+            },
+            {
+              "type": "text",
+              "content": "Before we dive into writing HTML, it's important to understand how the internet actually works. When you type a URL into your browser, a complex series of events happens in milliseconds to display a web page."
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Learning Objectives"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Explain the client-server model",
+                "Understand what HTTP and HTTPS are",
+                "Describe how DNS translates domain names to IP addresses",
+                "Explain what happens when you visit a website",
+                "Identify the role of web browsers"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Video Resources"
+            },
+            {
+              "type": "video",
+              "url": "https://www.youtube.com/watch?v=7_LPdttKXPc",
+              "title": "How the Internet Works in 5 Minutes (5 min)",
+              "description": "Quick overview of internet fundamentals"
+            },
+            {
+              "type": "video",
+              "url": "https://www.youtube.com/watch?v=x3c1ih2NJEg",
+              "title": "How The Web Works - The Big Picture (12 min)",
+              "description": "Comprehensive explanation of web architecture"
+            },
+            {
+              "type": "video",
+              "url": "https://www.youtube.com/watch?v=hJHvdBlSxug",
+              "title": "What is HTTP? (15 min)",
+              "description": "Deep dive into HTTP protocol and requests"
+            },
+            {
+              "type": "video",
+              "url": "https://www.youtube.com/watch?v=72snZctFFtA",
+              "title": "DNS Explained in 100 Seconds (2 min)",
+              "description": "Quick explanation of Domain Name System"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Key Concepts"
+            },
+            {
+              "type": "text",
+              "content": "Client-Server Model: Your browser (client) requests data from a web server, which sends back HTML, CSS, JavaScript, and other resources."
+            },
+            {
+              "type": "text",
+              "content": "HTTP (HyperText Transfer Protocol): The protocol browsers use to communicate with web servers. HTTPS is the secure version using encryption."
+            },
+            {
+              "type": "text",
+              "content": "DNS (Domain Name System): Translates human-readable domain names (like google.com) into IP addresses (like 142.250.80.46) that computers use."
+            },
+            {
+              "type": "text",
+              "content": "IP Address: A unique numerical identifier for every device connected to the internet (like a street address for your computer)."
+            },
+            {
+              "type": "text",
+              "content": "Web Browser: Software that requests, receives, and displays web pages (Chrome, Firefox, Safari, Edge)."
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "What Happens When You Visit a Website?"
+            },
+            {
+              "type": "list",
+              "ordered": true,
+              "items": [
+                "You type 'example.com' into your browser",
+                "Browser asks DNS server: 'What's the IP address for example.com?'",
+                "DNS responds: 'It's 93.184.216.34'",
+                "Browser sends HTTP request to that IP address",
+                "Server processes the request and sends back HTML, CSS, JS files",
+                "Browser receives files and renders the web page",
+                "You see the website!"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "HTTP Methods"
+            },
+            {
+              "type": "text",
+              "content": "HTTP uses different 'verbs' for different actions:"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "GET - Request data from a server (viewing a webpage)",
+                "POST - Send data to a server (submitting a form)",
+                "PUT - Update existing data on a server",
+                "DELETE - Remove data from a server"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "HTTP Status Codes"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "200 - OK (request succeeded)",
+                "404 - Not Found (page doesn't exist)",
+                "500 - Internal Server Error (server crashed)",
+                "301 - Moved Permanently (redirect)",
+                "403 - Forbidden (no permission to access)"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Understanding URLs"
+            },
+            {
+              "type": "text",
+              "content": "A URL (Uniform Resource Locator) has several parts:"
+            },
+            {
+              "type": "code",
+              "language": "text",
+              "code": "https://www.example.com:443/path/to/page?name=value#section\n\nhttps://     - Protocol (HTTP Secure)\nwww          - Subdomain\nexample.com  - Domain name\n:443         - Port (optional, 443 is default for HTTPS)\n/path/to/page - Path to resource\n?name=value  - Query parameters\n#section     - Fragment (anchor to page section)"
+            },
+            {
+              "type": "quiz",
+              "title": "How the Internet Works Quiz",
+              "timeLimit": 10,
+              "attempts": 2,
+              "questions": [
+                {
+                  "id": "q_101",
+                  "type": "multiple_choice",
+                  "question": "What does DNS stand for?",
+                  "options": [
+                    "Data Network System",
+                    "Domain Name System",
+                    "Digital Network Service",
+                    "Domain Navigation System"
+                  ],
+                  "correctAnswer": 1,
+                  "points": 10,
+                  "explanation": "DNS (Domain Name System) translates human-readable domain names like google.com into IP addresses that computers use to identify each other."
+                },
+                {
+                  "id": "q_102",
+                  "type": "multiple_choice",
+                  "question": "Which HTTP method is used when you submit a form?",
+                  "options": [
+                    "GET",
+                    "POST",
+                    "PUT",
+                    "DELETE"
+                  ],
+                  "correctAnswer": 1,
+                  "points": 10,
+                  "explanation": "POST is used to send data to a server, such as when submitting a form. GET is for retrieving data, while PUT and DELETE are for updating and removing data."
+                },
+                {
+                  "id": "q_103",
+                  "type": "multiple_choice",
+                  "question": "What does the HTTP status code 404 mean?",
+                  "options": [
+                    "Request successful",
+                    "Server error",
+                    "Page not found",
+                    "Access forbidden"
+                  ],
+                  "correctAnswer": 2,
+                  "points": 10,
+                  "explanation": "404 means 'Not Found' - the requested resource doesn't exist on the server. This is one of the most common error codes you'll encounter."
+                },
+                {
+                  "id": "q_104",
+                  "type": "multiple_choice",
+                  "question": "What is the difference between HTTP and HTTPS?",
+                  "options": [
+                    "HTTPS is faster",
+                    "HTTPS uses encryption for security",
+                    "HTTP works on mobile, HTTPS doesn't",
+                    "There is no difference"
+                  ],
+                  "correctAnswer": 1,
+                  "points": 10,
+                  "explanation": "HTTPS (HTTP Secure) encrypts data between your browser and the server, protecting sensitive information like passwords and credit card numbers from being intercepted."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Lesson 2: HTML Document Structure and Semantics",
+          "description": "Learn proper HTML structure and semantic tags for meaningful markup",
+          "content": [
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "HTML Document Structure and Semantics"
+            },
+            {
+              "type": "text",
+              "content": "HTML (HyperText Markup Language) is the skeleton of every web page. It defines the structure and content using 'tags' that tell browsers how to display information. Semantic HTML means using tags that clearly describe their content's meaning."
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Video Resources"
+            },
+            {
+              "type": "video",
+              "url": "https://www.youtube.com/watch?v=qz0aGYrrlhU",
+              "title": "HTML Tutorial for Beginners (1 hour)",
+              "description": "Comprehensive HTML tutorial covering all basics"
+            },
+            {
+              "type": "video",
+              "url": "https://www.youtube.com/watch?v=kGW8Al_cga4",
+              "title": "Learn HTML in 12 Minutes (12 min)",
+              "description": "Quick overview of essential HTML concepts"
+            },
+            {
+              "type": "video",
+              "url": "https://www.youtube.com/watch?v=UB1O30fR-EE",
+              "title": "HTML Semantic Elements Explained (18 min)",
+              "description": "Understanding semantic HTML for better structure"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Basic HTML Document Structure"
+            },
+            {
+              "type": "code",
+              "language": "html",
+              "code": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Page Title</title>\n    <meta name=\"description\" content=\"Page description for SEO\">\n</head>\n<body>\n    <!-- Your content goes here -->\n    <h1>Main Heading</h1>\n    <p>This is a paragraph.</p>\n</body>\n</html>"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Understanding the Structure"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "<!DOCTYPE html> - Tells browser this is HTML5",
+                "<html> - Root element containing all content",
+                "<head> - Metadata about the page (not visible)",
+                "<meta charset=\"UTF-8\"> - Character encoding for text",
+                "<meta name=\"viewport\"> - Makes site responsive on mobile",
+                "<title> - Text shown in browser tab",
+                "<body> - All visible content goes here"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Common HTML Tags"
+            },
+            {
+              "type": "text",
+              "content": "Headings (h1-h6):"
+            },
+            {
+              "type": "code",
+              "language": "html",
+              "code": "<h1>Most Important Heading</h1>\n<h2>Subheading</h2>\n<h3>Sub-subheading</h3>\n<!-- h4, h5, h6 for smaller headings -->"
+            },
+            {
+              "type": "text",
+              "content": "Paragraphs and Text Formatting:"
+            },
+            {
+              "type": "code",
+              "language": "html",
+              "code": "<p>This is a paragraph.</p>\n<strong>Bold text (important)</strong>\n<em>Italic text (emphasis)</em>\n<mark>Highlighted text</mark>\n<small>Smaller text</small>\n<br> <!-- Line break -->"
+            },
+            {
+              "type": "text",
+              "content": "Links and Images:"
+            },
+            {
+              "type": "code",
+              "language": "html",
+              "code": "<a href=\"https://example.com\">Link text</a>\n<a href=\"about.html\">Internal link to another page</a>\n<a href=\"#section\">Jump to section on same page</a>\n\n<img src=\"image.jpg\" alt=\"Description of image\" width=\"300\">"
+            },
+            {
+              "type": "text",
+              "content": "Lists:"
+            },
+            {
+              "type": "code",
+              "language": "html",
+              "code": "<!-- Unordered (bullet) list -->\n<ul>\n    <li>First item</li>\n    <li>Second item</li>\n    <li>Third item</li>\n</ul>\n\n<!-- Ordered (numbered) list -->\n<ol>\n    <li>First step</li>\n    <li>Second step</li>\n    <li>Third step</li>\n</ol>"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Semantic HTML Elements"
+            },
+            {
+              "type": "text",
+              "content": "Semantic elements clearly describe their meaning to both the browser and developer:"
+            },
+            {
+              "type": "code",
+              "language": "html",
+              "code": "<header>\n    <nav>\n        <ul>\n            <li><a href=\"#home\">Home</a></li>\n            <li><a href=\"#about\">About</a></li>\n        </ul>\n    </nav>\n</header>\n\n<main>\n    <article>\n        <h2>Article Title</h2>\n        <p>Article content...</p>\n    </article>\n    \n    <section>\n        <h2>Section Title</h2>\n        <p>Section content...</p>\n    </section>\n    \n    <aside>\n        <p>Related information or sidebar content</p>\n    </aside>\n</main>\n\n<footer>\n    <p>&copy; 2026 Your Name. All rights reserved.</p>\n</footer>"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Semantic Tags Explained"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "<header> - Top section with logo, navigation",
+                "<nav> - Navigation links",
+                "<main> - Main content of the page (only one per page)",
+                "<article> - Self-contained content (blog post, news article)",
+                "<section> - Thematic grouping of content",
+                "<aside> - Sidebar or related content",
+                "<footer> - Bottom section with copyright, links",
+                "<figure> and <figcaption> - Images with captions"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Div vs Semantic Elements"
+            },
+            {
+              "type": "text",
+              "content": "❌ Non-semantic (bad):"
+            },
+            {
+              "type": "code",
+              "language": "html",
+              "code": "<div class=\"header\">\n    <div class=\"nav\">...</div>\n</div>\n<div class=\"content\">\n    <div class=\"article\">...</div>\n</div>"
+            },
+            {
+              "type": "text",
+              "content": "✅ Semantic (good):"
+            },
+            {
+              "type": "code",
+              "language": "html",
+              "code": "<header>\n    <nav>...</nav>\n</header>\n<main>\n    <article>...</article>\n</main>"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Why Semantic HTML Matters"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Better SEO - Search engines understand content structure",
+                "Accessibility - Screen readers navigate content more easily",
+                "Maintainability - Code is easier to read and update",
+                "Future-proof - Works better with new technologies"
+              ]
+            },
+            {
+              "type": "quiz",
+              "title": "HTML Structure Quiz",
+              "timeLimit": 10,
+              "attempts": 2,
+              "questions": [
+                {
+                  "id": "q_201",
+                  "type": "multiple_choice",
+                  "question": "Which tag contains metadata about the HTML document?",
+                  "options": [
+                    "<body>",
+                    "<meta>",
+                    "<head>",
+                    "<title>"
+                  ],
+                  "correctAnswer": 2,
+                  "points": 10,
+                  "explanation": "The <head> element contains metadata about the document including title, character set, styles, and scripts. This content is not displayed on the page."
+                },
+                {
+                  "id": "q_202",
+                  "type": "multiple_choice",
+                  "question": "What is the purpose of semantic HTML?",
+                  "options": [
+                    "To make pages load faster",
+                    "To clearly describe the meaning of content",
+                    "To add styling to elements",
+                    "To enable JavaScript functionality"
+                  ],
+                  "correctAnswer": 1,
+                  "points": 10,
+                  "explanation": "Semantic HTML uses tags that clearly describe their content's meaning (like <article>, <nav>, <footer>), improving accessibility, SEO, and code maintainability."
+                },
+                {
+                  "id": "q_203",
+                  "type": "multiple_choice",
+                  "question": "Which element represents the main content of a page?",
+                  "options": [
+                    "<content>",
+                    "<body>",
+                    "<main>",
+                    "<section>"
+                  ],
+                  "correctAnswer": 2,
+                  "points": 10,
+                  "explanation": "The <main> element represents the dominant content of the page. There should be only one <main> element per page, and it shouldn't be inside <article>, <aside>, <footer>, <header>, or <nav>."
+                },
+                {
+                  "id": "q_204",
+                  "type": "multiple_choice",
+                  "question": "What does the alt attribute in an <img> tag do?",
+                  "options": [
+                    "Sets the image size",
+                    "Provides alternative text for screen readers",
+                    "Changes the image color",
+                    "Makes the image clickable"
+                  ],
+                  "correctAnswer": 1,
+                  "points": 10,
+                  "explanation": "The alt attribute provides alternative text that describes the image. It's displayed if the image fails to load and is read by screen readers for accessibility."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Lesson 3: Forms, Tables, and Media Elements",
+          "description": "Create interactive forms, structured tables, and embed media",
+          "content": [
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "Forms, Tables, and Media Elements"
+            },
+            {
+              "type": "text",
+              "content": "Forms allow users to input data, tables organize information in rows and columns, and media elements embed images, videos, and audio. These are essential components of modern websites."
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Video Resources"
+            },
+            {
+              "type": "video",
+              "url": "https://www.youtube.com/watch?v=fNcJuPIZ2WE",
+              "title": "HTML Forms Tutorial (25 min)",
+              "description": "Complete guide to creating HTML forms"
+            },
+            {
+              "type": "video",
+              "url": "https://www.youtube.com/watch?v=iuFKcRAY1fg",
+              "title": "HTML Tables in 10 Minutes (10 min)",
+              "description": "Quick guide to creating accessible tables"
+            },
+            {
+              "type": "video",
+              "url": "https://www.youtube.com/watch?v=OOy764mDtiA",
+              "title": "HTML5 Audio and Video (12 min)",
+              "description": "Embedding media in web pages"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "HTML Forms"
+            },
+            {
+              "type": "text",
+              "content": "Forms collect user input and send it to a server. Here's a complete contact form example:"
+            },
+            {
+              "type": "code",
+              "language": "html",
+              "code": "<form action=\"/submit\" method=\"POST\">\n    <!-- Text input -->\n    <label for=\"name\">Name:</label>\n    <input type=\"text\" id=\"name\" name=\"name\" required>\n    \n    <!-- Email input with validation -->\n    <label for=\"email\">Email:</label>\n    <input type=\"email\" id=\"email\" name=\"email\" required>\n    \n    <!-- Password input -->\n    <label for=\"password\">Password:</label>\n    <input type=\"password\" id=\"password\" name=\"password\" minlength=\"8\">\n    \n    <!-- Textarea for longer text -->\n    <label for=\"message\">Message:</label>\n    <textarea id=\"message\" name=\"message\" rows=\"4\"></textarea>\n    \n    <!-- Radio buttons (select one) -->\n    <fieldset>\n        <legend>Preferred Contact Method:</legend>\n        <input type=\"radio\" id=\"email-contact\" name=\"contact\" value=\"email\">\n        <label for=\"email-contact\">Email</label>\n        \n        <input type=\"radio\" id=\"phone-contact\" name=\"contact\" value=\"phone\">\n        <label for=\"phone-contact\">Phone</label>\n    </fieldset>\n    \n    <!-- Checkboxes (select multiple) -->\n    <label>\n        <input type=\"checkbox\" name=\"subscribe\" value=\"yes\">\n        Subscribe to newsletter\n    </label>\n    \n    <!-- Dropdown select -->\n    <label for=\"country\">Country:</label>\n    <select id=\"country\" name=\"country\">\n        <option value=\"\">-- Select --</option>\n        <option value=\"us\">United States</option>\n        <option value=\"uk\">United Kingdom</option>\n        <option value=\"ca\">Canada</option>\n    </select>\n    \n    <!-- File upload -->\n    <label for=\"file\">Upload Resume:</label>\n    <input type=\"file\" id=\"file\" name=\"resume\" accept=\".pdf,.doc,.docx\">\n    \n    <!-- Submit button -->\n    <button type=\"submit\">Send Message</button>\n</form>"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Form Input Types"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "text - Single-line text input",
+                "email - Email with validation",
+                "password - Hidden text input",
+                "number - Numeric input",
+                "date - Date picker",
+                "time - Time picker",
+                "tel - Telephone number",
+                "url - Website address",
+                "search - Search box",
+                "color - Color picker",
+                "range - Slider",
+                "file - File upload"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Form Attributes"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "required - Field must be filled",
+                "placeholder - Hint text inside input",
+                "minlength/maxlength - Text length limits",
+                "min/max - Number limits",
+                "pattern - Regular expression validation",
+                "disabled - Field cannot be edited",
+                "readonly - Field can be seen but not edited"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "HTML Tables"
+            },
+            {
+              "type": "text",
+              "content": "Tables organize data in rows and columns:"
+            },
+            {
+              "type": "code",
+              "language": "html",
+              "code": "<table>\n    <caption>Student Grades</caption>\n    <thead>\n        <tr>\n            <th>Name</th>\n            <th>Subject</th>\n            <th>Grade</th>\n        </tr>\n    </thead>\n    <tbody>\n        <tr>\n            <td>Alice Johnson</td>\n            <td>Mathematics</td>\n            <td>95</td>\n        </tr>\n        <tr>\n            <td>Bob Smith</td>\n            <td>Science</td>\n            <td>88</td>\n        </tr>\n        <tr>\n            <td>Carol Davis</td>\n            <td>History</td>\n            <td>92</td>\n        </tr>\n    </tbody>\n    <tfoot>\n        <tr>\n            <td colspan=\"2\">Average</td>\n            <td>91.7</td>\n        </tr>\n    </tfoot>\n</table>"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Table Elements"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "<table> - Container for the table",
+                "<caption> - Table title/description",
+                "<thead> - Table header section",
+                "<tbody> - Table body (main data)",
+                "<tfoot> - Table footer (totals, summary)",
+                "<tr> - Table row",
+                "<th> - Header cell (bold, centered)",
+                "<td> - Data cell",
+                "colspan - Span multiple columns",
+                "rowspan - Span multiple rows"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Embedding Images"
+            },
+            {
+              "type": "code",
+              "language": "html",
+              "code": "<!-- Basic image -->\n<img src=\"photo.jpg\" alt=\"Description of photo\" width=\"600\">\n\n<!-- Image with figure and caption -->\n<figure>\n    <img src=\"chart.png\" alt=\"Sales chart for Q4 2025\">\n    <figcaption>Q4 Sales Performance</figcaption>\n</figure>\n\n<!-- Responsive image with multiple sources -->\n<picture>\n    <source media=\"(min-width: 800px)\" srcset=\"large.jpg\">\n    <source media=\"(min-width: 400px)\" srcset=\"medium.jpg\">\n    <img src=\"small.jpg\" alt=\"Responsive image\">\n</picture>"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Embedding Video"
+            },
+            {
+              "type": "code",
+              "language": "html",
+              "code": "<video width=\"640\" height=\"360\" controls>\n    <source src=\"video.mp4\" type=\"video/mp4\">\n    <source src=\"video.webm\" type=\"video/webm\">\n    Your browser doesn't support video.\n</video>\n\n<!-- YouTube embed -->\n<iframe width=\"560\" height=\"315\" \n    src=\"https://www.youtube.com/embed/dQw4w9WgXcQ\"\n    title=\"Video title\"\n    frameborder=\"0\"\n    allowfullscreen>\n</iframe>"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Embedding Audio"
+            },
+            {
+              "type": "code",
+              "language": "html",
+              "code": "<audio controls>\n    <source src=\"audio.mp3\" type=\"audio/mpeg\">\n    <source src=\"audio.ogg\" type=\"audio/ogg\">\n    Your browser doesn't support audio.\n</audio>"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Practice Exercise"
+            },
+            {
+              "type": "list",
+              "ordered": true,
+              "items": [
+                "Create a contact form with name, email, message fields",
+                "Add a table showing your favorite books or movies",
+                "Embed an image with proper alt text",
+                "Add a YouTube video using iframe",
+                "Test your form inputs with different values"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Lesson 4: Accessibility Best Practices",
+          "description": "Make your websites accessible to everyone with ARIA and semantic HTML",
+          "content": [
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "Accessibility Best Practices (A11y)"
+            },
+            {
+              "type": "text",
+              "content": "Web accessibility means making websites usable by everyone, including people with disabilities. This includes those using screen readers, keyboard navigation, or other assistive technologies. Accessible websites are also better for SEO and mobile users."
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Video Resources"
+            },
+            {
+              "type": "video",
+              "url": "https://www.youtube.com/watch?v=e2nkq3h1P68",
+              "title": "Web Accessibility Tutorial (15 min)",
+              "description": "Introduction to web accessibility principles"
+            },
+            {
+              "type": "video",
+              "url": "https://www.youtube.com/watch?v=qr0ujkLLgmE",
+              "title": "ARIA Labels and Roles Explained (12 min)",
+              "description": "Understanding ARIA for better accessibility"
+            },
+            {
+              "type": "video",
+              "url": "https://www.youtube.com/watch?v=z8xUCzToff8",
+              "title": "Keyboard Navigation in Web Apps (10 min)",
+              "description": "Making sites navigable without a mouse"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Why Accessibility Matters"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "15% of the world has some form of disability",
+                "It's the law in many countries (ADA in US, WCAG internationally)",
+                "Better user experience for everyone",
+                "Improves SEO rankings",
+                "Increases your potential audience",
+                "It's the right thing to do"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Semantic HTML for Accessibility"
+            },
+            {
+              "type": "text",
+              "content": "Using semantic HTML is the foundation of accessibility:"
+            },
+            {
+              "type": "code",
+              "language": "html",
+              "code": "<!-- ✅ GOOD: Semantic and accessible -->\n<nav>\n    <ul>\n        <li><a href=\"#home\">Home</a></li>\n        <li><a href=\"#about\">About</a></li>\n    </ul>\n</nav>\n\n<!-- ❌ BAD: Not semantic -->\n<div class=\"nav\">\n    <span onclick=\"navigate()\">Home</span>\n    <span onclick=\"navigate()\">About</span>\n</div>"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Alt Text for Images"
+            },
+            {
+              "type": "text",
+              "content": "Always provide descriptive alt text:"
+            },
+            {
+              "type": "code",
+              "language": "html",
+              "code": "<!-- ✅ GOOD: Descriptive alt text -->\n<img src=\"dog.jpg\" alt=\"Golden retriever playing fetch in a park\">\n\n<!-- ❌ BAD: Generic or missing alt -->\n<img src=\"dog.jpg\" alt=\"image\">\n<img src=\"dog.jpg\">\n\n<!-- Decorative images use empty alt -->\n<img src=\"decoration.png\" alt=\"\">"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Form Labels"
+            },
+            {
+              "type": "text",
+              "content": "Every form input needs a label:"
+            },
+            {
+              "type": "code",
+              "language": "html",
+              "code": "<!-- ✅ GOOD: Label associated with input -->\n<label for=\"email\">Email Address:</label>\n<input type=\"email\" id=\"email\" name=\"email\">\n\n<!-- ❌ BAD: No label -->\n<input type=\"email\" placeholder=\"Email\">\n\n<!-- Alternative: Wrap input in label -->\n<label>\n    Email:\n    <input type=\"email\" name=\"email\">\n</label>"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "ARIA (Accessible Rich Internet Applications)"
+            },
+            {
+              "type": "text",
+              "content": "ARIA attributes provide additional context for assistive technologies:"
+            },
+            {
+              "type": "code",
+              "language": "html",
+              "code": "<!-- aria-label: Provides accessible name -->\n<button aria-label=\"Close dialog\">\n    <span class=\"icon-x\"></span>\n</button>\n\n<!-- aria-labelledby: References another element -->\n<h2 id=\"dialog-title\">Confirm Action</h2>\n<div role=\"dialog\" aria-labelledby=\"dialog-title\">\n    <p>Are you sure?</p>\n</div>\n\n<!-- aria-describedby: Additional description -->\n<input type=\"password\" \n    aria-describedby=\"password-requirements\">\n<p id=\"password-requirements\">\n    Password must be at least 8 characters\n</p>\n\n<!-- aria-live: Announce dynamic changes -->\n<div aria-live=\"polite\" role=\"status\">\n    Form submitted successfully!\n</div>"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Common ARIA Roles"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "role=\"navigation\" - Navigation section",
+                "role=\"main\" - Main content",
+                "role=\"search\" - Search form",
+                "role=\"button\" - Button element",
+                "role=\"alert\" - Important message",
+                "role=\"dialog\" - Modal dialog",
+                "role=\"status\" - Status message",
+                "role=\"banner\" - Site header"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Keyboard Navigation"
+            },
+            {
+              "type": "text",
+              "content": "Ensure all interactive elements work with keyboard:"
+            },
+            {
+              "type": "code",
+              "language": "html",
+              "code": "<!-- Make divs keyboard accessible with tabindex -->\n<div tabindex=\"0\" role=\"button\" \n     onkeypress=\"handleKeyPress(event)\">\n    Click me\n</div>\n\n<!-- Skip navigation link -->\n<a href=\"#main-content\" class=\"skip-link\">\n    Skip to main content\n</a>\n\n<!-- Use button, not div for clickable elements -->\n<button onclick=\"submit()\">Submit</button>"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Color Contrast"
+            },
+            {
+              "type": "text",
+              "content": "Ensure sufficient color contrast for readability:"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "WCAG AA: Minimum contrast ratio of 4.5:1 for normal text",
+                "WCAG AAA: Enhanced contrast ratio of 7:1",
+                "Large text (18pt+) needs 3:1 minimum",
+                "Don't rely on color alone to convey information",
+                "Test with tools like WebAIM Contrast Checker"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Accessible Tables"
+            },
+            {
+              "type": "code",
+              "language": "html",
+              "code": "<table>\n    <caption>Student Enrollment by Department</caption>\n    <thead>\n        <tr>\n            <th scope=\"col\">Department</th>\n            <th scope=\"col\">Students</th>\n        </tr>\n    </thead>\n    <tbody>\n        <tr>\n            <th scope=\"row\">Computer Science</th>\n            <td>150</td>\n        </tr>\n        <tr>\n            <th scope=\"row\">Mathematics</th>\n            <td>120</td>\n        </tr>\n    </tbody>\n</table>"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Testing Accessibility"
+            },
+            {
+              "type": "list",
+              "ordered": true,
+              "items": [
+                "Use browser DevTools Accessibility Inspector",
+                "Test keyboard navigation (Tab, Enter, Arrow keys)",
+                "Use a screen reader (NVDA, JAWS, VoiceOver)",
+                "Check color contrast with online tools",
+                "Validate HTML (invalid HTML breaks screen readers)",
+                "Use automated tools like axe DevTools or WAVE"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Quick Accessibility Checklist"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "✓ All images have alt text",
+                "✓ Forms have labels for all inputs",
+                "✓ Color contrast meets WCAG AA standards",
+                "✓ Site works with keyboard only",
+                "✓ Page has proper heading hierarchy (h1, h2, h3)",
+                "✓ Links have descriptive text (not 'click here')",
+                "✓ HTML is valid and semantic",
+                "✓ Skip to main content link present"
+              ]
+            },
+            {
+              "type": "quiz",
+              "title": "Accessibility Quiz",
+              "timeLimit": 10,
+              "attempts": 2,
+              "questions": [
+                {
+                  "id": "q_401",
+                  "type": "multiple_choice",
+                  "question": "What is the purpose of the alt attribute in images?",
+                  "options": [
+                    "To make images load faster",
+                    "To provide alternative text for screen readers and when images don't load",
+                    "To add a tooltip when hovering",
+                    "To compress the image size"
+                  ],
+                  "correctAnswer": 1,
+                  "points": 10,
+                  "explanation": "The alt attribute provides alternative text that describes the image. It's read by screen readers for visually impaired users and displayed if the image fails to load."
+                },
+                {
+                  "id": "q_402",
+                  "type": "multiple_choice",
+                  "question": "What does ARIA stand for?",
+                  "options": [
+                    "Advanced Responsive Internet Applications",
+                    "Accessible Rich Internet Applications",
+                    "Automated Rendering of Interactive Applications",
+                    "Application Resource Integration API"
+                  ],
+                  "correctAnswer": 1,
+                  "points": 10,
+                  "explanation": "ARIA (Accessible Rich Internet Applications) is a set of attributes that make web content and applications more accessible to people with disabilities."
+                },
+                {
+                  "id": "q_403",
+                  "type": "multiple_choice",
+                  "question": "Which is the correct way to label a form input for accessibility?",
+                  "options": [
+                    "<input placeholder=\"Name\">",
+                    "<label for=\"name\">Name:</label><input id=\"name\">",
+                    "<input title=\"Name\">",
+                    "<div>Name:</div><input>"
+                  ],
+                  "correctAnswer": 1,
+                  "points": 10,
+                  "explanation": "Using <label for=\"id\"> explicitly associates the label with the input using the id attribute. This helps screen readers and improves usability by making the entire label clickable."
+                },
+                {
+                  "id": "q_404",
+                  "type": "multiple_choice",
+                  "question": "What is the minimum color contrast ratio for normal text according to WCAG AA?",
+                  "options": [
+                    "3:1",
+                    "4.5:1",
+                    "7:1",
+                    "2:1"
+                  ],
+                  "correctAnswer": 1,
+                  "points": 10,
+                  "explanation": "WCAG AA requires a minimum contrast ratio of 4.5:1 for normal-sized text. This ensures text is readable for users with visual impairments or color blindness."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Lesson 5: Developer Tools and Debugging HTML",
+          "description": "Master browser DevTools to inspect, debug, and optimize your HTML",
+          "content": [
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "Developer Tools and Debugging HTML"
+            },
+            {
+              "type": "text",
+              "content": "Browser Developer Tools (DevTools) are essential for web development. They let you inspect HTML, modify styles in real-time, debug JavaScript, monitor network requests, and much more. Every professional developer uses DevTools daily."
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Video Resources"
+            },
+            {
+              "type": "video",
+              "url": "https://www.youtube.com/watch?v=gTVpBbFWry8",
+              "title": "Chrome DevTools Crash Course (30 min)",
+              "description": "Comprehensive guide to using Chrome DevTools"
+            },
+            {
+              "type": "video",
+              "url": "https://www.youtube.com/watch?v=e1gAyQuIFQo",
+              "title": "HTML Debugging Tips and Tricks (12 min)",
+              "description": "Common HTML errors and how to fix them"
+            },
+            {
+              "type": "video",
+              "url": "https://www.youtube.com/watch?v=JzZFccCEgGA",
+              "title": "Inspect Element Like a Pro (15 min)",
+              "description": "Advanced DevTools techniques"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Opening DevTools"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Windows/Linux: F12 or Ctrl+Shift+I",
+                "Mac: Cmd+Option+I",
+                "Right-click any element → Inspect",
+                "Chrome menu → More Tools → Developer Tools"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Elements Panel"
+            },
+            {
+              "type": "text",
+              "content": "The Elements panel lets you inspect and modify HTML/CSS:"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "View DOM tree structure",
+                "Edit HTML in real-time (changes are temporary)",
+                "Add/remove attributes",
+                "See computed styles for any element",
+                "Test CSS changes before editing your code",
+                "View box model (margin, border, padding, content)"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Inspecting Elements"
+            },
+            {
+              "type": "text",
+              "content": "How to inspect specific elements:"
+            },
+            {
+              "type": "list",
+              "ordered": true,
+              "items": [
+                "Click the 'Select Element' icon (top-left of DevTools)",
+                "Hover over page elements to highlight them",
+                "Click to select and view in Elements panel",
+                "Right-click element → Copy → Copy selector/XPath",
+                "Use :hov to force hover/focus states"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Console Panel"
+            },
+            {
+              "type": "text",
+              "content": "The Console displays errors, warnings, and log messages:"
+            },
+            {
+              "type": "code",
+              "language": "javascript",
+              "code": "// Log messages to console\nconsole.log('Hello from console');\nconsole.error('This is an error');\nconsole.warn('This is a warning');\nconsole.table([{name: 'Alice', age: 25}, {name: 'Bob', age: 30}]);\n\n// Access elements\ndocument.querySelector('h1');\n$('h1'); // jQuery-style selector in DevTools"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Network Panel"
+            },
+            {
+              "type": "text",
+              "content": "Monitor all network requests:"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "See all files loaded (HTML, CSS, JS, images)",
+                "Check file sizes and load times",
+                "View HTTP status codes (200, 404, 500)",
+                "Inspect request/response headers",
+                "Throttle network speed to test on slow connections",
+                "Filter by file type or search"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Common HTML Errors"
+            },
+            {
+              "type": "text",
+              "content": "❌ Missing closing tags:"
+            },
+            {
+              "type": "code",
+              "language": "html",
+              "code": "<!-- WRONG -->\n<div>\n    <p>Text\n</div>\n\n<!-- CORRECT -->\n<div>\n    <p>Text</p>\n</div>"
+            },
+            {
+              "type": "text",
+              "content": "❌ Nested tags incorrectly:"
+            },
+            {
+              "type": "code",
+              "language": "html",
+              "code": "<!-- WRONG -->\n<p>Text <strong>bold <em>italic</p></em></strong>\n\n<!-- CORRECT -->\n<p>Text <strong>bold <em>italic</em></strong></p>"
+            },
+            {
+              "type": "text",
+              "content": "❌ Using block elements inside inline:"
+            },
+            {
+              "type": "code",
+              "language": "html",
+              "code": "<!-- WRONG -->\n<span>\n    <div>Text</div>\n</span>\n\n<!-- CORRECT -->\n<div>\n    <span>Text</span>\n</div>"
+            },
+            {
+              "type": "text",
+              "content": "❌ Duplicate IDs:"
+            },
+            {
+              "type": "code",
+              "language": "html",
+              "code": "<!-- WRONG - IDs must be unique -->\n<div id=\"box\">Box 1</div>\n<div id=\"box\">Box 2</div>\n\n<!-- CORRECT -->\n<div id=\"box1\">Box 1</div>\n<div id=\"box2\">Box 2</div>"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "HTML Validation"
+            },
+            {
+              "type": "text",
+              "content": "Always validate your HTML to catch errors:"
+            },
+            {
+              "type": "list",
+              "ordered": true,
+              "items": [
+                "Go to https://validator.w3.org/",
+                "Upload your HTML file or paste URL",
+                "Review errors and warnings",
+                "Fix issues in your code",
+                "Re-validate until no errors remain"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "DevTools Shortcuts"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Ctrl/Cmd+Shift+C: Select element to inspect",
+                "Ctrl/Cmd+F: Search in Elements panel",
+                "Ctrl/Cmd+Shift+P: Command palette",
+                "H: Hide/show element",
+                "Delete: Remove element",
+                "F2: Edit HTML",
+                "Ctrl/Cmd+Z: Undo changes"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Debugging Tips"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Use DevTools to test changes before editing code",
+                "Check Console for error messages",
+                "Validate HTML with W3C validator",
+                "Use 'Inspect' to find exact selectors",
+                "Test responsive design with Device Toolbar",
+                "Simulate different screen sizes and devices",
+                "Use Lighthouse for performance and accessibility audits"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Lighthouse Audit"
+            },
+            {
+              "type": "text",
+              "content": "Run Lighthouse to check your site:"
+            },
+            {
+              "type": "list",
+              "ordered": true,
+              "items": [
+                "Open DevTools",
+                "Click 'Lighthouse' tab",
+                "Select categories (Performance, Accessibility, SEO)",
+                "Click 'Generate report'",
+                "Review scores and recommendations",
+                "Fix issues and re-run audit"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Practice Exercises"
+            },
+            {
+              "type": "list",
+              "ordered": true,
+              "items": [
+                "Open any website and inspect its HTML structure",
+                "Temporarily change text and colors using DevTools",
+                "Find and fix 3 common HTML errors in sample code",
+                "Run Lighthouse audit on your portfolio page",
+                "Use Network panel to see all loaded resources",
+                "Test your site on mobile view using Device Toolbar"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Assignment 1: Personal Portfolio Landing Page",
+          "description": "Build a professional multi-page HTML website - Due Week 2, Wednesday 11:59 PM",
+          "content": [
+            {
+              "type": "heading",
+              "level": 1,
+              "text": "📝 Assignment 1: Personal Portfolio Landing Page"
+            },
+            {
+              "type": "text",
+              "content": "Create a professional, multi-page personal portfolio website using only HTML (no CSS yet!). This project demonstrates your understanding of semantic HTML, forms, tables, accessibility, and proper document structure."
+            },
+            {
+              "type": "assignment",
+              "assignmentType": "regular",
+              "title": "Personal Portfolio Landing Page (HTML Only)",
+              "description": "Build a complete 3-page portfolio website showcasing yourself as a developer. Focus on semantic HTML structure, accessibility, and clean code. You'll receive peer reviews from 2 classmates and review 2 others' work.",
+              "dueDate": "2026-03-04T23:59:00",
+              "points": 150,
+              "submissionType": "text",
+              "peerReview": {
+                "enabled": true,
+                "reviewsPerSubmission": 2,
+                "anonymous": false,
+                "rubric": [
+                  {
+                    "criterion": "Semantic HTML Usage",
+                    "maxPoints": 20,
+                    "description": "Proper use of header, nav, main, section, article, footer elements"
+                  },
+                  {
+                    "criterion": "Code Quality & Organization",
+                    "maxPoints": 15,
+                    "description": "Clean, well-indented code with proper comments"
+                  },
+                  {
+                    "criterion": "Accessibility",
+                    "maxPoints": 15,
+                    "description": "Alt text, labels, ARIA attributes, semantic markup"
+                  },
+                  {
+                    "criterion": "Content Completeness",
+                    "maxPoints": 10,
+                    "description": "All required pages and sections included"
+                  }
+                ]
+              },
+              "rubric": [
+                {
+                  "criterion": "HTML Structure & Semantics",
+                  "maxPoints": 30,
+                  "description": "Proper use of semantic HTML5 elements (header, nav, main, section, article, footer)"
+                },
+                {
+                  "criterion": "About/Home Page",
+                  "maxPoints": 25,
+                  "description": "Complete about section with bio, image, skills list"
+                },
+                {
+                  "criterion": "Projects Page",
+                  "maxPoints": 25,
+                  "description": "At least 3 projects with descriptions, images, and links"
+                },
+                {
+                  "criterion": "Contact Page with Form",
+                  "maxPoints": 30,
+                  "description": "Working form with proper labels, validation, and accessibility"
+                },
+                {
+                  "criterion": "Accessibility",
+                  "maxPoints": 20,
+                  "description": "Alt text, labels, ARIA where needed, keyboard navigation"
+                },
+                {
+                  "criterion": "HTML Validation",
+                  "maxPoints": 20,
+                  "description": "All pages pass W3C HTML validation with no errors"
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "Project Requirements"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Three Required Pages"
+            },
+            {
+              "type": "list",
+              "ordered": true,
+              "items": [
+                "index.html - Home/About page",
+                "projects.html - Projects showcase page",
+                "contact.html - Contact form page"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Page 1: Home/About (index.html)"
+            },
+            {
+              "type": "text",
+              "content": "Must include:"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Page title and meta tags",
+                "Header with your name and navigation menu",
+                "Main section with your photo (with alt text!)",
+                "About section with 2-3 paragraphs about yourself",
+                "Skills section (use unordered list)",
+                "Education/experience section (use table or ordered list)",
+                "Footer with copyright and social links",
+                "Navigation links to all three pages"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Page 2: Projects (projects.html)"
+            },
+            {
+              "type": "text",
+              "content": "Must include:"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Same header and navigation as home page",
+                "At least 3 project showcases using <article> or <section>",
+                "Each project needs: title, description, image, GitHub link",
+                "Use semantic HTML (article, section, figure)",
+                "Table showing project technologies/tech stack",
+                "Same footer as home page"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Page 3: Contact (contact.html)"
+            },
+            {
+              "type": "text",
+              "content": "Must include:"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Same header and navigation as other pages",
+                "Contact form with these fields:",
+                "- Name (text input, required)",
+                "- Email (email input, required)",
+                "- Subject (text input or dropdown)",
+                "- Message (textarea, required)",
+                "- Contact preference (radio buttons)",
+                "- Subscribe checkbox",
+                "All inputs must have proper <label> elements",
+                "Submit button",
+                "Same footer as other pages"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Technical Requirements"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "✅ Valid HTML5 (must pass W3C validator)",
+                "✅ Semantic HTML elements used appropriately",
+                "✅ All images have descriptive alt text",
+                "✅ All form inputs have labels",
+                "✅ Consistent navigation across all pages",
+                "✅ Proper heading hierarchy (h1, h2, h3)",
+                "✅ At least one table with proper headers",
+                "✅ At least one list (ul or ol)",
+                "✅ Links open in appropriate window/tab",
+                "✅ Clean, well-formatted code with indentation"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "Starter Template"
+            },
+            {
+              "type": "text",
+              "content": "Here's a template to get you started (index.html):"
+            },
+            {
+              "type": "code",
+              "language": "html",
+              "code": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <meta name=\"description\" content=\"[Your Name] - Web Developer Portfolio\">\n    <title>[Your Name] | Web Developer</title>\n</head>\n<body>\n    <header>\n        <h1>[Your Name]</h1>\n        <nav>\n            <ul>\n                <li><a href=\"index.html\">Home</a></li>\n                <li><a href=\"projects.html\">Projects</a></li>\n                <li><a href=\"contact.html\">Contact</a></li>\n            </ul>\n        </nav>\n    </header>\n\n    <main>\n        <section id=\"about\">\n            <h2>About Me</h2>\n            <img src=\"photo.jpg\" alt=\"Photo of [Your Name]\" width=\"300\">\n            <p>[Your introduction paragraph]</p>\n            <p>[More about you]</p>\n        </section>\n\n        <section id=\"skills\">\n            <h2>Skills</h2>\n            <ul>\n                <li>HTML5</li>\n                <li>CSS3</li>\n                <li>JavaScript</li>\n                <!-- Add more skills -->\n            </ul>\n        </section>\n\n        <section id=\"experience\">\n            <h2>Experience</h2>\n            <table>\n                <caption>Work Experience</caption>\n                <thead>\n                    <tr>\n                        <th>Role</th>\n                        <th>Company</th>\n                        <th>Year</th>\n                    </tr>\n                </thead>\n                <tbody>\n                    <tr>\n                        <td>[Job Title]</td>\n                        <td>[Company Name]</td>\n                        <td>[Year]</td>\n                    </tr>\n                    <!-- Add more rows -->\n                </tbody>\n            </table>\n        </section>\n    </main>\n\n    <footer>\n        <p>&copy; 2026 [Your Name]. All rights reserved.</p>\n        <nav>\n            <ul>\n                <li><a href=\"https://github.com/yourusername\">GitHub</a></li>\n                <li><a href=\"https://linkedin.com/in/yourusername\">LinkedIn</a></li>\n            </ul>\n        </nav>\n    </footer>\n</body>\n</html>"
+            },
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "Submission Instructions"
+            },
+            {
+              "type": "list",
+              "ordered": true,
+              "items": [
+                "Create a GitHub repository named 'portfolio-html'",
+                "Add all three HTML files (index.html, projects.html, contact.html)",
+                "Include images folder with all images used",
+                "Add a README.md describing your portfolio",
+                "Validate all HTML files using W3C validator",
+                "Fix all errors before submitting",
+                "Push everything to GitHub",
+                "Enable GitHub Pages (Settings → Pages → Deploy from main branch)",
+                "Submit both: GitHub repository URL AND live GitHub Pages URL",
+                "Complete 2 peer reviews within 3 days of submission"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "Validation Steps"
+            },
+            {
+              "type": "list",
+              "ordered": true,
+              "items": [
+                "Go to https://validator.w3.org/",
+                "Click 'Validate by File Upload'",
+                "Upload each HTML file",
+                "Fix all errors (warnings are okay)",
+                "Screenshot validation results showing 'No errors'",
+                "Include screenshots in your repository"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "Peer Review Guidelines"
+            },
+            {
+              "type": "text",
+              "content": "When reviewing classmates' portfolios, check:"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Are semantic HTML elements used properly?",
+                "Do all images have alt text?",
+                "Do form inputs have labels?",
+                "Is navigation consistent across pages?",
+                "Does the code look clean and organized?",
+                "Are there any obvious HTML errors?",
+                "Give at least 2 specific positive comments",
+                "Give at least 1 constructive suggestion"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "Grading Breakdown (150 points)"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "HTML Structure & Semantics: 30 pts",
+                "About/Home Page: 25 pts",
+                "Projects Page: 25 pts",
+                "Contact Page with Form: 30 pts",
+                "Accessibility: 20 pts",
+                "HTML Validation: 20 pts"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "Tips for Success"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Start early! Don't wait until the last day",
+                "Validate your HTML frequently, not just at the end",
+                "Use semantic elements instead of generic divs",
+                "Test your navigation - make sure all links work",
+                "Write descriptive alt text for all images",
+                "Keep your code organized and well-indented",
+                "Add comments to explain your structure",
+                "Test on different browsers if possible"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "Common Mistakes to Avoid"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "❌ Missing alt text on images",
+                "❌ Form inputs without labels",
+                "❌ Using <div> instead of semantic elements",
+                "❌ Broken navigation links",
+                "❌ Not validating HTML",
+                "❌ Duplicate IDs",
+                "❌ Missing doctype",
+                "❌ Nested elements incorrectly",
+                "❌ Repository not public on GitHub"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "Need Help?"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "📖 Review Week 1 lessons",
+                "💬 Ask in Discord #week1-help channel",
+                "🎯 Attend office hours",
+                "🔍 Check example portfolios in resources folder",
+                "✅ Use the validation checklist below"
+              ]
+            },
+            {
+              "type": "text",
+              "content": "Good luck! This portfolio will be the foundation for your online presence as a developer. Make it count! 🚀"
+            }
+          ]
+        },
+        {
+          "title": "Code Challenge: HTML Validator Bot",
+          "description": "Build a valid HTML page that passes automated structure checks",
+          "content": [
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "🏆 Code Challenge: HTML Structure Validator"
+            },
+            {
+              "type": "text",
+              "content": "Create a single HTML page with specific semantic elements and structure. Our automated checker will verify your HTML follows best practices and contains all required elements."
+            },
+            {
+              "type": "assignment",
+              "assignmentType": "code-challenge",
+              "title": "Semantic HTML Structure Challenge",
+              "description": "Build an HTML page with proper semantic structure. The auto-grader will check for doctype, meta tags, semantic elements, accessibility features, and valid HTML structure.",
+              "dueDate": "2026-03-05T23:59:00",
+              "points": 50,
+              "submissionType": "url",
+              "codeCheckingEnabled": true,
+              "codeChecking": {
+                "language": "html",
+                "repoName": "week1-html-challenge",
+                "requiredFiles": [
+                  "index.html"
+                ],
+                "mainFile": "index.html",
+                "testingType": "html-validation",
+                "testCases": [
+                  {
+                    "name": "Has valid HTML5 doctype",
+                    "points": 5,
+                    "description": "Page starts with <!DOCTYPE html>"
+                  },
+                  {
+                    "name": "Contains required meta tags",
+                    "points": 5,
+                    "description": "Includes charset and viewport meta tags"
+                  },
+                  {
+                    "name": "Uses semantic header element",
+                    "points": 10,
+                    "description": "Has <header> with navigation"
+                  },
+                  {
+                    "name": "Uses semantic main element",
+                    "points": 10,
+                    "description": "Has <main> element containing content"
+                  },
+                  {
+                    "name": "Uses semantic footer element",
+                    "points": 5,
+                    "description": "Has <footer> element"
+                  },
+                  {
+                    "name": "All images have alt attributes",
+                    "points": 10,
+                    "description": "Every <img> tag includes alt text"
+                  },
+                  {
+                    "name": "Passes W3C validation",
+                    "points": 5,
+                    "description": "HTML has no validation errors"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Requirements"
+            },
+            {
+              "type": "text",
+              "content": "Create index.html with:"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Valid HTML5 doctype declaration",
+                "HTML lang attribute set to 'en'",
+                "Meta charset UTF-8",
+                "Meta viewport tag for mobile responsiveness",
+                "<title> element with your name",
+                "Semantic <header> with <nav> containing 3+ links",
+                "Semantic <main> with at least 2 <section> elements",
+                "At least one <h1> heading (only one per page!)",
+                "At least one <h2> heading",
+                "At least one <img> with descriptive alt text",
+                "At least one <ul> or <ol> list",
+                "Semantic <footer> with copyright text",
+                "No validation errors when checked with W3C validator"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Example Structure"
+            },
+            {
+              "type": "code",
+              "language": "html",
+              "code": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Your Name - HTML Challenge</title>\n</head>\n<body>\n    <header>\n        <nav>\n            <ul>\n                <li><a href=\"#about\">About</a></li>\n                <li><a href=\"#skills\">Skills</a></li>\n                <li><a href=\"#contact\">Contact</a></li>\n            </ul>\n        </nav>\n    </header>\n\n    <main>\n        <section id=\"about\">\n            <h1>About Me</h1>\n            <img src=\"profile.jpg\" alt=\"Profile photo of [Your Name]\">\n            <p>Your introduction here...</p>\n        </section>\n\n        <section id=\"skills\">\n            <h2>My Skills</h2>\n            <ul>\n                <li>HTML5</li>\n                <li>CSS3</li>\n                <li>JavaScript</li>\n            </ul>\n        </section>\n    </main>\n\n    <footer>\n        <p>&copy; 2026 Your Name. All rights reserved.</p>\n    </footer>\n</body>\n</html>"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Submission"
+            },
+            {
+              "type": "list",
+              "ordered": true,
+              "items": [
+                "Create GitHub repository named 'week1-html-challenge'",
+                "Add your index.html file",
+                "Validate it at https://validator.w3.org/",
+                "Fix all errors",
+                "Push to GitHub (make sure it's public!)",
+                "Submit your repository URL"
+              ]
+            },
+            {
+              "type": "text",
+              "content": "The auto-grader will analyze your HTML and give instant feedback! ⚡"
+            }
+          ]
+        },
+        {
+          "title": "Week 1 Final Assessment",
+          "description": "Test your HTML knowledge with this comprehensive quiz",
+          "content": [
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "📊 Week 1 Final Assessment"
+            },
+            {
+              "type": "text",
+              "content": "Test your understanding of HTML and web fundamentals. This quiz covers everything from Week 1. You have 45 minutes and 2 attempts."
+            },
+            {
+              "type": "quiz",
+              "title": "Week 1 Comprehensive Assessment",
+              "timeLimit": 45,
+              "attempts": 2,
+              "questions": [
+                {
+                  "id": "q_final_01",
+                  "type": "multiple_choice",
+                  "question": "What does HTML stand for?",
+                  "options": [
+                    "Hyper Text Markup Language",
+                    "High Tech Modern Language",
+                    "Home Tool Markup Language",
+                    "Hyperlinks and Text Markup Language"
+                  ],
+                  "correctAnswer": 0,
+                  "points": 5,
+                  "explanation": "HTML stands for HyperText Markup Language. It's the standard markup language for creating web pages."
+                },
+                {
+                  "id": "q_final_02",
+                  "type": "multiple_choice",
+                  "question": "Which tag is used for the most important heading?",
+                  "options": [
+                    "<head>",
+                    "<h6>",
+                    "<heading>",
+                    "<h1>"
+                  ],
+                  "correctAnswer": 3,
+                  "points": 5,
+                  "explanation": "<h1> is used for the most important heading. There should typically be only one <h1> per page for proper semantic structure."
+                },
+                {
+                  "id": "q_final_03",
+                  "type": "multiple_choice",
+                  "question": "What is the purpose of the <nav> element?",
+                  "options": [
+                    "To create a navigation menu",
+                    "To display images",
+                    "To add a footer",
+                    "To create a form"
+                  ],
+                  "correctAnswer": 0,
+                  "points": 5,
+                  "explanation": "The <nav> element represents a section of navigation links. It's a semantic element that helps structure your page and improves accessibility."
+                },
+                {
+                  "id": "q_final_04",
+                  "type": "multiple_choice",
+                  "question": "Which attribute makes a form input required?",
+                  "options": [
+                    "mandatory",
+                    "required",
+                    "necessary",
+                    "needed"
+                  ],
+                  "correctAnswer": 1,
+                  "points": 5,
+                  "explanation": "The 'required' attribute makes a form field mandatory. The browser will prevent form submission if required fields are empty."
+                },
+                {
+                  "id": "q_final_05",
+                  "type": "multiple_choice",
+                  "question": "What does the viewport meta tag do?",
+                  "options": [
+                    "Speeds up page loading",
+                    "Makes the site responsive on mobile devices",
+                    "Improves SEO",
+                    "Adds animations"
+                  ],
+                  "correctAnswer": 1,
+                  "points": 5,
+                  "explanation": "The viewport meta tag controls how your site displays on mobile devices. It tells the browser to scale the page to fit the device width."
+                },
+                {
+                  "id": "q_final_06",
+                  "type": "multiple_choice",
+                  "question": "Which element represents self-contained content like a blog post?",
+                  "options": [
+                    "<div>",
+                    "<section>",
+                    "<article>",
+                    "<content>"
+                  ],
+                  "correctAnswer": 2,
+                  "points": 5,
+                  "explanation": "The <article> element represents self-contained, independently distributable content like a blog post, news article, or forum post."
+                },
+                {
+                  "id": "q_final_07",
+                  "type": "multiple_choice",
+                  "question": "How do you create an email input field?",
+                  "options": [
+                    "<input type=\"mail\">",
+                    "<input type=\"email\">",
+                    "<email></email>",
+                    "<input email>"
+                  ],
+                  "correctAnswer": 1,
+                  "points": 5,
+                  "explanation": "<input type=\"email\"> creates an email input field with built-in validation. The browser will check if the input is a valid email format."
+                },
+                {
+                  "id": "q_final_08",
+                  "type": "multiple_choice",
+                  "question": "What's the correct way to link to another page?",
+                  "options": [
+                    "<a url=\"page.html\">Link</a>",
+                    "<link>page.html</link>",
+                    "<a href=\"page.html\">Link</a>",
+                    "<a src=\"page.html\">Link</a>"
+                  ],
+                  "correctAnswer": 2,
+                  "points": 5,
+                  "explanation": "<a href=\"page.html\">Link</a> is the correct syntax. The 'href' attribute specifies the URL of the page the link goes to."
+                },
+                {
+                  "id": "q_final_09",
+                  "type": "multiple_choice",
+                  "question": "Which tag defines table data?",
+                  "options": [
+                    "<data>",
+                    "<td>",
+                    "<table-data>",
+                    "<th>"
+                  ],
+                  "correctAnswer": 1,
+                  "points": 5,
+                  "explanation": "<td> (table data) defines a standard cell in a table. <th> is for header cells."
+                },
+                {
+                  "id": "q_final_10",
+                  "type": "multiple_choice",
+                  "question": "What does WCAG stand for?",
+                  "options": [
+                    "Web Content Accessibility Guidelines",
+                    "World Creative Arts Group",
+                    "Web Code And Graphics",
+                    "Website Creation and Growth"
+                  ],
+                  "correctAnswer": 0,
+                  "points": 5,
+                  "explanation": "WCAG stands for Web Content Accessibility Guidelines. They provide standards for making web content more accessible to people with disabilities."
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "content": "Congratulations on completing Week 1! You now have a solid foundation in HTML and web fundamentals. Next week, we'll make your websites beautiful with CSS! 🎨"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

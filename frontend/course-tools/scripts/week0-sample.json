@@ -1,0 +1,1419 @@
+{
+  "courseId": "fullstack-2026",
+  "courseTitle": "Full-Stack Software Engineering Course",
+  "courseDescription": "16-week intensive program to become a job-ready full-stack developer",
+  "weeks": [
+    {
+      "title": "Week 0: Onboarding & Foundations",
+      "description": "Get started with development tools, set up your environment, learn computational thinking, and complete your first coding exercises",
+      "published": true,
+      "sections": [
+        {
+          "title": "Day 1: Course Overview & Learning Philosophy",
+          "description": "Understanding the course structure and developing effective learning strategies",
+          "content": [
+            {
+              "type": "heading",
+              "level": 1,
+              "text": "Welcome to Your Journey! 🚀"
+            },
+            {
+              "type": "text",
+              "content": "Welcome to Week 0 of your full-stack engineering journey! This week is designed to set you up for success in the 16-week program ahead. You'll establish your development environment, learn the foundational tools every developer uses, and complete your first coding exercises."
+            },
+            {
+              "type": "text",
+              "content": "Think of this week as your launch pad. By the end of Week 0, you'll have everything configured, you'll understand how professional developers work, and you'll have written your first lines of code in multiple programming languages."
+            },
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "Week 0 Overview"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Duration: 7 Days (Day 1-7)",
+                "Time Commitment: 12-15 hours total",
+                "Difficulty Level: Beginner-Friendly",
+                "Prerequisites: None! Just bring curiosity and commitment"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "Learning Outcomes"
+            },
+            {
+              "type": "text",
+              "content": "By the end of Week 0, you will be able to:"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Explain what full-stack development is and the career opportunities it offers",
+                "Navigate your computer using the command line interface",
+                "Use Git for version control and collaborate using GitHub",
+                "Write and execute basic programs in HTML, CSS, JavaScript, and Python",
+                "Apply computational thinking to break down problems systematically",
+                "Set up a professional development environment used by engineers worldwide"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "Key Concepts: Growth Mindset"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Growth mindset: You can learn anything with practice",
+                "Active learning: Hands-on coding beats passive watching",
+                "The debugging mindset: Errors are learning opportunities",
+                "Spaced repetition: Review concepts regularly",
+                "Community learning: Help others to reinforce your understanding"
+              ]
+            },
+            {
+              "type": "quiz",
+              "title": "Learning Philosophy Quiz",
+              "timeLimit": 10,
+              "attempts": 3,
+              "questions": [
+                {
+                  "id": "q_001",
+                  "type": "multiple_choice",
+                  "question": "What is a growth mindset?",
+                  "options": [
+                    "Believing your abilities are fixed and cannot change",
+                    "Believing you can develop your abilities through practice and effort",
+                    "Only focusing on what you're naturally good at",
+                    "Avoiding challenges to maintain confidence"
+                  ],
+                  "correctAnswer": 1,
+                  "points": 5,
+                  "explanation": "A growth mindset means believing that your abilities can be developed through dedication and hard work. This view creates a love of learning and resilience essential for great accomplishment."
+                },
+                {
+                  "id": "q_002",
+                  "type": "multiple_choice",
+                  "question": "Which learning approach is most effective for coding?",
+                  "options": [
+                    "Reading documentation without practicing",
+                    "Watching tutorial videos only",
+                    "Hands-on coding with real projects",
+                    "Memorizing syntax without understanding concepts"
+                  ],
+                  "correctAnswer": 2,
+                  "points": 5,
+                  "explanation": "Active learning through hands-on coding is the most effective way to learn programming. Building real projects helps you understand concepts deeply and develop problem-solving skills."
+                },
+                {
+                  "id": "q_003",
+                  "type": "multiple_choice",
+                  "question": "When you encounter an error in your code, what should you do?",
+                  "options": [
+                    "Give up and move to something easier",
+                    "Copy and paste code without understanding it",
+                    "View it as a learning opportunity and debug systematically",
+                    "Ask someone else to fix it for you immediately"
+                  ],
+                  "correctAnswer": 2,
+                  "points": 5,
+                  "explanation": "Errors are valuable learning opportunities. Debugging systematically teaches you how to read error messages, understand what went wrong, and develop problem-solving skills that are crucial for developers."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Lesson 1: What is Full-Stack Development?",
+          "description": "90 minutes - Understanding the complete web development landscape",
+          "content": [
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "What is Full-Stack Development?"
+            },
+            {
+              "type": "text",
+              "content": "Full-stack development refers to building both the frontend (what users see) and backend (server and database) of web applications. As a full-stack developer, you'll understand the complete technology stack and how all the pieces fit together."
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Learning Objectives"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Define full-stack development and its components",
+                "Understand the difference between frontend, backend, and databases",
+                "Identify career paths and job opportunities for developers",
+                "Recognize the technologies you'll learn throughout the course"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Video Resource"
+            },
+            {
+              "type": "video",
+              "url": "https://www.youtube.com/watch?v=JEBkh_vYoKU",
+              "title": "What is Full Stack Development? - Complete Overview (15 min)",
+              "description": "Comprehensive introduction covering frontend, backend, databases, and career paths. This video explains how all components work together in modern web applications."
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Key Concepts"
+            },
+            {
+              "type": "text",
+              "content": "Frontend Development: The 'client-side' - everything users see and interact with in their browser. Technologies: HTML, CSS, JavaScript, React."
+            },
+            {
+              "type": "text",
+              "content": "Backend Development: The 'server-side' - handles business logic, authentication, and data processing. Technologies: Node.js, Express, Python, APIs."
+            },
+            {
+              "type": "text",
+              "content": "Database: Where data is stored and retrieved. Technologies: PostgreSQL, MongoDB, MySQL."
+            },
+            {
+              "type": "text",
+              "content": "Full-Stack Developer: A developer who can work on both frontend and backend, understanding how all pieces connect together."
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "The Technology Stack You'll Learn"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Frontend: HTML, CSS, JavaScript, React",
+                "Backend: Node.js, Express.js",
+                "Database: PostgreSQL",
+                "Tools: Git, GitHub, VS Code, Command Line",
+                "Deployment: Cloud platforms and hosting"
+              ]
+            },
+            {
+              "type": "quiz",
+              "title": "Full-Stack Fundamentals Quiz",
+              "timeLimit": 15,
+              "attempts": 2,
+              "questions": [
+                {
+                  "id": "q_101",
+                  "type": "multiple_choice",
+                  "question": "What does the frontend of a web application refer to?",
+                  "options": [
+                    "The database where data is stored",
+                    "The server that processes requests",
+                    "Everything the user sees and interacts with in their browser",
+                    "The code that runs on the server"
+                  ],
+                  "correctAnswer": 2,
+                  "points": 10,
+                  "explanation": "The frontend (client-side) is everything users see and interact with in their web browser, including the visual design, layout, and interactive elements."
+                },
+                {
+                  "id": "q_102",
+                  "type": "multiple_choice",
+                  "question": "Which of these is a backend technology?",
+                  "options": [
+                    "HTML and CSS",
+                    "React",
+                    "Node.js and Express",
+                    "Bootstrap"
+                  ],
+                  "correctAnswer": 2,
+                  "points": 10,
+                  "explanation": "Node.js and Express are backend technologies that run on the server to handle business logic, authentication, and data processing."
+                },
+                {
+                  "id": "q_103",
+                  "type": "multiple_choice",
+                  "question": "What is the primary purpose of a database in web applications?",
+                  "options": [
+                    "To make websites look pretty",
+                    "To store and retrieve data persistently",
+                    "To write frontend code",
+                    "To handle user clicks"
+                  ],
+                  "correctAnswer": 1,
+                  "points": 10,
+                  "explanation": "Databases store and retrieve data persistently, allowing applications to save user information, posts, transactions, and any other data that needs to be preserved."
+                },
+                {
+                  "id": "q_104",
+                  "type": "multiple_choice",
+                  "question": "What does a full-stack developer do?",
+                  "options": [
+                    "Only works on frontend design",
+                    "Only writes backend code",
+                    "Works on both frontend and backend",
+                    "Only manages databases"
+                  ],
+                  "correctAnswer": 2,
+                  "points": 10,
+                  "explanation": "Full-stack developers work on both the frontend (what users see) and backend (server logic and databases), understanding how all parts of an application work together."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Lesson 2: Setting Up Your Development Environment",
+          "description": "120 minutes - Hands-on installation and configuration",
+          "content": [
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "Development Environment Setup"
+            },
+            {
+              "type": "text",
+              "content": "Professional developers use a specific set of tools to write, test, and manage code. In this lesson, you'll install and configure everything you need to start coding."
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Software to Install"
+            },
+            {
+              "type": "list",
+              "ordered": true,
+              "items": [
+                "Visual Studio Code (VS Code) - Your code editor",
+                "Git - Version control system",
+                "Node.js (LTS version) - JavaScript runtime",
+                "Google Chrome or Firefox - Modern web browser with dev tools",
+                "Postman or Thunder Client - API testing tool (optional for now)"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Video Tutorial"
+            },
+            {
+              "type": "video",
+              "url": "https://www.youtube.com/watch?v=fnPhJHN0jTE",
+              "title": "VS Code Setup & Configuration for Beginners (25 min)",
+              "description": "Complete guide to installing and setting up Visual Studio Code with essential extensions and settings for web development."
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "VS Code Extensions to Install"
+            },
+            {
+              "type": "text",
+              "content": "After installing VS Code, add these essential extensions to enhance your workflow:"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Live Server - Launch local development server with live reload",
+                "Prettier - Code formatter for consistent styling",
+                "ESLint - JavaScript linter to catch errors",
+                "GitLens - Enhanced Git integration and history",
+                "Path Intellisense - Autocomplete file paths",
+                "Auto Rename Tag - Automatically rename paired HTML tags",
+                "Bracket Pair Colorizer - Color matching brackets"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Installation Verification"
+            },
+            {
+              "type": "text",
+              "content": "After installation, verify everything is working by running these commands in your terminal:"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "# Check Node.js version\nnode --version\n# Should display: v18.x.x or v20.x.x\n\n# Check npm version\nnpm --version\n# Should display: 9.x.x or 10.x.x\n\n# Check Git version\ngit --version\n# Should display: git version 2.x.x\n\n# Open VS Code from terminal\ncode .\n# Should open VS Code in current directory"
+            },
+            {
+              "type": "text",
+              "content": "Each command should display a version number. If you see errors, review the installation steps or ask for help in the course Discord."
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Additional Resources"
+            },
+            {
+              "type": "text",
+              "content": "For detailed installation guides specific to your operating system, refer to the official documentation:"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "VS Code: https://code.visualstudio.com/docs/setup/setup-overview",
+                "Node.js: https://nodejs.org/en/download/",
+                "Git: https://git-scm.com/book/en/v2/Getting-Started-Installing-Git"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Lesson 3: Introduction to the Command Line",
+          "description": "90 minutes - Terminal basics and hands-on practice",
+          "content": [
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "Mastering the Command Line"
+            },
+            {
+              "type": "text",
+              "content": "The command line (also called terminal or shell) is how developers interact with their computer at a fundamental level. While it may seem intimidating at first, it's an essential skill that will make you much more efficient."
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Why Use the Command Line?"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Much faster than clicking through folders",
+                "Required for using Git, npm, and deployment tools",
+                "Automate repetitive tasks with scripts",
+                "Access to powerful system utilities",
+                "Essential for server management and DevOps"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Video Resource"
+            },
+            {
+              "type": "video",
+              "url": "https://www.youtube.com/watch?v=uwAqEzhyjtw",
+              "title": "Command Line Crash Course - Beginner Friendly (25 min)",
+              "description": "Complete introduction to terminal commands and navigation for Windows, Mac, and Linux users."
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Essential Commands - Navigation"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "# pwd - Print Working Directory (where am I?)\npwd\n\n# ls - List files and folders (what's here?)\nls\nls -la  # List all files including hidden ones\n\n# cd - Change Directory (move around)\ncd Documents        # Go into Documents folder\ncd ..              # Go up one level\ncd ~               # Go to home directory\ncd /               # Go to root directory"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Essential Commands - File Operations"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "# mkdir - Make new directory\nmkdir my-project\nmkdir -p projects/week0/code  # Create nested folders\n\n# touch - Create new file (Mac/Linux)\ntouch index.html\ntouch style.css script.js\n\n# On Windows, use:\necho. > index.html\n\n# cp - Copy files\ncp file.txt backup.txt\ncp -r folder/ backup-folder/  # Copy entire folder\n\n# mv - Move or rename files\nmv old-name.txt new-name.txt\nmv file.txt ../other-folder/\n\n# rm - Remove files (CAREFUL!)\nrm file.txt\nrm -rf folder/  # Remove folder and contents (DANGEROUS!)"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Essential Commands - Viewing & Editing"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "# cat - Display file contents\ncat README.md\n\n# code - Open in VS Code\ncode .              # Open current folder\ncode index.html     # Open specific file\n\n# clear - Clear the terminal screen\nclear\n# Or use: Ctrl+L (Mac/Linux) or cls (Windows)"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Practice Exercise"
+            },
+            {
+              "type": "text",
+              "content": "Complete this hands-on exercise to practice your new command line skills:"
+            },
+            {
+              "type": "list",
+              "ordered": true,
+              "items": [
+                "Open your terminal application",
+                "Navigate to your Desktop using cd",
+                "Create a folder called 'week0-practice'",
+                "Navigate into that folder",
+                "Create three files: hello.txt, notes.md, and script.js",
+                "Create a subfolder called 'backup'",
+                "Copy hello.txt into the backup folder",
+                "List all files to verify your work",
+                "Open the entire folder in VS Code using 'code .'"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Pro Tips"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Use Tab to autocomplete file/folder names",
+                "Use up/down arrow keys to cycle through previous commands",
+                "Use Ctrl+C to cancel a running command",
+                "Use Ctrl+R to search command history",
+                "Type 'man <command>' to see the manual (Mac/Linux)"
+              ]
+            },
+            {
+              "type": "quiz",
+              "title": "Command Line Basics Quiz",
+              "timeLimit": 10,
+              "attempts": 2,
+              "questions": [
+                {
+                  "id": "q_201",
+                  "type": "multiple_choice",
+                  "question": "Which command shows your current directory location?",
+                  "options": [
+                    "ls",
+                    "cd",
+                    "pwd",
+                    "dir"
+                  ],
+                  "correctAnswer": 2,
+                  "points": 10,
+                  "explanation": "pwd (Print Working Directory) shows your current location in the file system. It's useful to know where you are before running other commands."
+                },
+                {
+                  "id": "q_202",
+                  "type": "multiple_choice",
+                  "question": "How do you create a new directory named 'projects'?",
+                  "options": [
+                    "create projects",
+                    "mkdir projects",
+                    "newdir projects",
+                    "touch projects"
+                  ],
+                  "correctAnswer": 1,
+                  "points": 10,
+                  "explanation": "mkdir (make directory) creates a new folder. Example: 'mkdir projects' creates a folder named 'projects' in your current directory."
+                },
+                {
+                  "id": "q_203",
+                  "type": "multiple_choice",
+                  "question": "What does 'cd ..' do?",
+                  "options": [
+                    "Creates a new folder named '..'",
+                    "Deletes the current folder",
+                    "Moves up one directory level",
+                    "Lists hidden files"
+                  ],
+                  "correctAnswer": 2,
+                  "points": 10,
+                  "explanation": "'cd ..' moves you up one level in the directory hierarchy. The '..' represents the parent directory."
+                },
+                {
+                  "id": "q_204",
+                  "type": "multiple_choice",
+                  "question": "Which command is DANGEROUS and can delete files permanently?",
+                  "options": [
+                    "ls -la",
+                    "rm -rf",
+                    "cp -r",
+                    "mkdir -p"
+                  ],
+                  "correctAnswer": 1,
+                  "points": 10,
+                  "explanation": "'rm -rf' recursively deletes files and folders without confirmation. Always double-check what you're deleting! Files deleted with rm cannot be recovered from the trash."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Lesson 4: Version Control with Git Basics",
+          "description": "120 minutes - Git fundamentals and GitHub setup",
+          "content": [
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "Introduction to Git & GitHub"
+            },
+            {
+              "type": "text",
+              "content": "Git is version control software that tracks changes to your code over time. GitHub is a website where you can store your code online and collaborate with others. Every professional developer uses these tools daily."
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Why Git Matters"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Track every change you make to your code",
+                "Collaborate with other developers on the same project",
+                "Revert to previous versions if something breaks",
+                "Create branches to experiment without breaking your main code",
+                "Required by employers - Git is an industry standard"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Video Resource"
+            },
+            {
+              "type": "video",
+              "url": "https://www.youtube.com/watch?v=RGOj5yH7evk",
+              "title": "Git and GitHub for Beginners - Crash Course (70 min)",
+              "description": "Comprehensive tutorial covering repositories, commits, branches, pull requests, and real-world workflows. This is the definitive starting point for Git beginners."
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Core Git Concepts"
+            },
+            {
+              "type": "text",
+              "content": "Repository (Repo): A folder that Git is tracking - contains all your files and their complete history."
+            },
+            {
+              "type": "text",
+              "content": "Commit: A snapshot of your code at a specific point in time. Like saving a game checkpoint that you can return to later."
+            },
+            {
+              "type": "text",
+              "content": "Remote: A copy of your repository hosted online (usually on GitHub). Allows collaboration, backup, and portfolio showcase."
+            },
+            {
+              "type": "text",
+              "content": "Branch: A separate line of development. The main branch is usually called 'main' or 'master'. You can create feature branches to work on new features without affecting the main code."
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Essential Git Commands"
+            },
+            {
+              "type": "code",
+              "language": "bash",
+              "code": "# Configure Git (do this once)\ngit config --global user.name \"Your Name\"\ngit config --global user.email \"your.email@example.com\"\n\n# Initialize a new Git repository\ngit init\n\n# Check which files have changed\ngit status\n\n# Stage all changes for commit\ngit add .\n# Or stage specific file:\ngit add index.html\n\n# Create a commit with a message\ngit commit -m \"Add homepage structure\"\n\n# Connect to GitHub repository\ngit remote add origin https://github.com/username/repo.git \n\n# Push commits to GitHub\ngit push origin main\n# First time: git push -u origin main\n\n# Pull changes from GitHub\ngit pull origin main\n\n# View commit history\ngit log\ngit log --oneline  # Compact view"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "The Git Workflow (Important!)"
+            },
+            {
+              "type": "list",
+              "ordered": true,
+              "items": [
+                "Make changes to your files in VS Code",
+                "Check status with 'git status' (see what changed)",
+                "Stage changes with 'git add .' (prepare to commit)",
+                "Commit with 'git commit -m \"descriptive message\"' (save snapshot)",
+                "Push to GitHub with 'git push' (upload to remote)"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Writing Good Commit Messages"
+            },
+            {
+              "type": "text",
+              "content": "Good commit messages are short, descriptive, and start with a verb:"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "✅ GOOD: \"Add login form validation\"",
+                "✅ GOOD: \"Fix navigation menu on mobile\"",
+                "✅ GOOD: \"Update README with installation steps\"",
+                "❌ BAD: \"updates\"",
+                "❌ BAD: \"fixed stuff\"",
+                "❌ BAD: \"asdfasdf\""
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Creating Your GitHub Account"
+            },
+            {
+              "type": "list",
+              "ordered": true,
+              "items": [
+                "Go to github.com and sign up for a free account",
+                "Choose a professional username (employers will see this!)",
+                "Add a profile picture - use a professional photo or avatar",
+                "Write a short bio describing what you're learning",
+                "Set up two-factor authentication for security"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Practice Exercise: Your First Repository"
+            },
+            {
+              "type": "list",
+              "ordered": true,
+              "items": [
+                "Create a new folder called 'git-practice'",
+                "Navigate into it: cd git-practice",
+                "Initialize Git: git init",
+                "Create a file: touch README.md",
+                "Add some text to README.md in VS Code",
+                "Stage the file: git add README.md",
+                "Commit: git commit -m \"Initial commit\"",
+                "Create a new repository on GitHub",
+                "Connect your local repo to GitHub (follow GitHub's instructions)",
+                "Push your code: git push -u origin main"
+              ]
+            },
+            {
+              "type": "quiz",
+              "title": "Git & GitHub Quiz",
+              "timeLimit": 15,
+              "attempts": 2,
+              "questions": [
+                {
+                  "id": "q_301",
+                  "type": "multiple_choice",
+                  "question": "What is the purpose of 'git add .'?",
+                  "options": [
+                    "Deletes all files",
+                    "Stages all changes to be committed",
+                    "Pushes code to GitHub",
+                    "Creates a new repository"
+                  ],
+                  "correctAnswer": 1,
+                  "points": 10,
+                  "explanation": "'git add .' stages all changed files, preparing them to be included in the next commit. The '.' means 'all files in current directory'."
+                },
+                {
+                  "id": "q_302",
+                  "type": "multiple_choice",
+                  "question": "What does 'git commit' do?",
+                  "options": [
+                    "Uploads code to GitHub",
+                    "Creates a snapshot of staged changes with a message",
+                    "Deletes the repository",
+                    "Downloads code from GitHub"
+                  ],
+                  "correctAnswer": 1,
+                  "points": 10,
+                  "explanation": "'git commit' creates a snapshot (checkpoint) of your staged changes. It saves the current state of your code with a descriptive message explaining what changed."
+                },
+                {
+                  "id": "q_303",
+                  "type": "multiple_choice",
+                  "question": "What is the difference between Git and GitHub?",
+                  "options": [
+                    "They are the same thing",
+                    "Git is the version control system, GitHub is a hosting service for Git repositories",
+                    "Git is online, GitHub is offline",
+                    "GitHub came first, then Git"
+                  ],
+                  "correctAnswer": 1,
+                  "points": 10,
+                  "explanation": "Git is the version control software that runs on your computer. GitHub is a website that hosts Git repositories online, enabling collaboration and portfolio showcase."
+                },
+                {
+                  "id": "q_304",
+                  "type": "multiple_choice",
+                  "question": "Which commit message follows best practices?",
+                  "options": [
+                    "\"stuff\"",
+                    "\"Add user authentication feature\"",
+                    "\"fixed bug\"",
+                    "\"update\""
+                  ],
+                  "correctAnswer": 1,
+                  "points": 10,
+                  "explanation": "Good commit messages are clear, descriptive, and start with a verb. 'Add user authentication feature' tells exactly what was changed and why."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Lesson 5: Your First Code - Hello World",
+          "description": "90 minutes - Writing your first programs in multiple languages",
+          "content": [
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "Your First Code: Hello World in Multiple Languages"
+            },
+            {
+              "type": "text",
+              "content": "The 'Hello World' program is a programming tradition. It's the simplest program you can write - just displays 'Hello World' on the screen. Let's write it in HTML, CSS, JavaScript, and Python!"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Video Resource"
+            },
+            {
+              "type": "video",
+              "url": "https://www.youtube.com/watch?v=ok-plXXHlWw",
+              "title": "HTML in 100 Seconds + Building Your First Webpage (15 min)",
+              "description": "Quick overview of HTML structure followed by a practical walkthrough of building your first webpage with HTML, CSS, and JavaScript basics."
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "HTML - Your First Webpage"
+            },
+            {
+              "type": "text",
+              "content": "HTML (HyperText Markup Language) is the foundation of all web pages. It defines the structure and content."
+            },
+            {
+              "type": "code",
+              "language": "html",
+              "code": "<!DOCTYPE html>\n<html>\n<head>\n    <title>My First Page</title>\n</head>\n<body>\n    <h1>Hello, World!</h1>\n    <p>This is my first HTML page.</p>\n    <p>I'm learning web development!</p>\n</body>\n</html>"
+            },
+            {
+              "type": "text",
+              "content": "To run this: Save as 'index.html', then open it in your browser. You should see your heading and paragraphs!"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "CSS - Adding Style"
+            },
+            {
+              "type": "text",
+              "content": "CSS (Cascading Style Sheets) makes your webpage look good. It controls colors, fonts, spacing, and layout."
+            },
+            {
+              "type": "code",
+              "language": "css",
+              "code": "/* Save as styles.css */\nbody {\n    background-color: #f0f0f0;\n    font-family: Arial, sans-serif;\n    text-align: center;\n    padding: 50px;\n}\n\nh1 {\n    color: #2E75B6;\n    font-size: 48px;\n}\n\np {\n    color: #333;\n    font-size: 20px;\n}"
+            },
+            {
+              "type": "text",
+              "content": "Link it in your HTML by adding this inside the <head> section:"
+            },
+            {
+              "type": "code",
+              "language": "html",
+              "code": "<link rel=\"stylesheet\" href=\"styles.css\">"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "JavaScript - Adding Interactivity"
+            },
+            {
+              "type": "text",
+              "content": "JavaScript makes your webpage interactive. It can respond to user actions, update content, and much more."
+            },
+            {
+              "type": "code",
+              "language": "javascript",
+              "code": "// Save as script.js\nconsole.log(\"Hello, World!\");\n\nlet name = \"Student\";\nconsole.log(\"Welcome, \" + name + \"!\");\n\n// Alert in browser\nalert(\"Hello from JavaScript!\");\n\n// Change HTML content\ndocument.querySelector('h1').textContent = \"JavaScript is working!\";"
+            },
+            {
+              "type": "text",
+              "content": "Add to your HTML before closing </body>:"
+            },
+            {
+              "type": "code",
+              "language": "html",
+              "code": "<script src=\"script.js\"></script>"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Python - Your First Script"
+            },
+            {
+              "type": "text",
+              "content": "Python is a beginner-friendly programming language used for web backends, data science, AI, and more."
+            },
+            {
+              "type": "code",
+              "language": "python",
+              "code": "# Save as hello.py\nprint(\"Hello, World!\")\n\nname = \"Student\"\nprint(f\"Welcome, {name}!\")\n\n# Python is beginner-friendly!\nfor i in range(5):\n    print(f\"Count: {i}\")\n\n# Simple calculator\nnum1 = 10\nnum2 = 5\nprint(f\"{num1} + {num2} = {num1 + num2}\")"
+            },
+            {
+              "type": "text",
+              "content": "To run Python: Save the file, then in terminal type 'python hello.py' (or 'python3 hello.py' on Mac/Linux)"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Practice Exercises"
+            },
+            {
+              "type": "list",
+              "ordered": true,
+              "items": [
+                "Create an HTML file that displays your name and favorite hobby",
+                "Add CSS to change the background color and text styling",
+                "Write JavaScript code that logs your name and age to the console",
+                "Create a Python script that prints a personalized greeting",
+                "BONUS: Make your HTML page display the current date using JavaScript"
+              ]
+            },
+            {
+              "type": "text",
+              "content": "Don't worry if you don't understand everything yet! The goal is to get familiar with writing code. We'll dive deeper into each language throughout the course."
+            }
+          ]
+        },
+        {
+          "title": "Assignment 0: GitHub Setup & Environment Configuration",
+          "description": "Due: Sunday, Week 0, 11:59 PM - Complete your development setup",
+          "content": [
+            {
+              "type": "heading",
+              "level": 1,
+              "text": "📝 Assignment 0: Your First Developer Setup"
+            },
+            {
+              "type": "text",
+              "content": "This assignment verifies that you have successfully set up your development environment and can perform basic Git operations. You'll create a GitHub account, configure your first repository, and demonstrate your setup by creating a personal README file."
+            },
+            {
+              "type": "assignment",
+              "assignmentType": "regular",
+              "title": "GitHub Setup & Personal README",
+              "description": "Create a GitHub account, set up your first repository with a personal README, and document your development environment. This demonstrates your ability to use Git and GitHub - fundamental tools for all developers. You'll also peer review two other students' submissions to practice giving constructive feedback.",
+              "dueDate": "2026-02-23T23:59:00",
+              "points": 100,
+              "submissionType": "text",
+              "peerReview": {
+                "enabled": true,
+                "reviewsPerSubmission": 2,
+                "anonymous": false,
+                "rubric": [
+                  {
+                    "criterion": "GitHub Profile Quality",
+                    "maxPoints": 10,
+                    "description": "Profile has picture, bio, and appears professional"
+                  },
+                  {
+                    "criterion": "README Completeness",
+                    "maxPoints": 20,
+                    "description": "README includes all required sections with thoughtful content"
+                  },
+                  {
+                    "criterion": "Markdown Formatting",
+                    "maxPoints": 10,
+                    "description": "Proper use of headers, lists, bold text, and other Markdown elements"
+                  },
+                  {
+                    "criterion": "Clarity & Professionalism",
+                    "maxPoints": 10,
+                    "description": "Writing is clear, professional, and free of obvious errors"
+                  }
+                ]
+              },
+              "rubric": [
+                {
+                  "criterion": "GitHub Account Setup",
+                  "maxPoints": 20,
+                  "description": "Profile picture, bio, and properly configured account"
+                },
+                {
+                  "criterion": "Repository Creation",
+                  "maxPoints": 20,
+                  "description": "Properly named repository 'week0-introduction', public visibility, initialized correctly"
+                },
+                {
+                  "criterion": "Personal README Content",
+                  "maxPoints": 30,
+                  "description": "Complete, thoughtful responses to all required sections"
+                },
+                {
+                  "criterion": "Markdown Formatting",
+                  "maxPoints": 10,
+                  "description": "Proper use of headers, lists, bold text, and other Markdown elements"
+                },
+                {
+                  "criterion": "Setup Documentation",
+                  "maxPoints": 20,
+                  "description": "Complete SETUP.md with all required software versions listed"
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "Part 1: GitHub Account & Repository (40 points)"
+            },
+            {
+              "type": "list",
+              "ordered": true,
+              "items": [
+                "Create a GitHub account at github.com (if you don't have one)",
+                "Choose a professional username - employers will see this!",
+                "Add a profile picture (professional photo or appropriate avatar)",
+                "Write a short bio describing what you're learning",
+                "Create a new public repository called 'week0-introduction'",
+                "Initialize the repository with a README.md file"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "Part 2: Personal README.md (40 points)"
+            },
+            {
+              "type": "text",
+              "content": "Create a README.md file in your repository that includes all of the following:"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Your name and a brief introduction about yourself",
+                "Why you're learning full-stack development (what motivates you?)",
+                "Your learning goals for this course (what do you want to accomplish?)",
+                "What kind of projects you want to build (be specific!)",
+                "At least two fun facts about yourself (hobbies, interests, etc.)",
+                "Use proper Markdown formatting: headers (# ## ###), lists, **bold text**, *italics*"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "README Template (Customize This!)"
+            },
+            {
+              "type": "code",
+              "language": "markdown",
+              "code": "# Hello, I'm [Your Name]! 👋\n\n## About Me\nBrief introduction about yourself - who you are, where you're from, current role/situation...\n\n## Why Full-Stack Development?\nExplain your motivation - career change? Building a startup? Love of coding?\n\n## My Learning Goals\n- Goal 1: Be specific! (e.g., \"Build and deploy a fully functional web app\")\n- Goal 2: Make it measurable (e.g., \"Contribute to open source projects\")\n- Goal 3: Think about impact (e.g., \"Create tools that help my community\")\n\n## Projects I Want to Build\n1. Project idea 1 with brief description\n2. Project idea 2 with brief description\n3. Project idea 3 with brief description\n\n## Fun Facts About Me\n- Interesting fact or hobby\n- Another hobby or interest\n- Something unique about you!\n\n## Connect With Me\n- GitHub: [your-username](https://github.com/your-username)\n- LinkedIn: [your-profile](https://linkedin.com/in/your-profile) *(optional)*\n- Twitter: [@your-handle](https://twitter.com/your-handle) *(optional)*\n\n---\n\n*This README is part of Week 0 assignment for the Full-Stack Engineering Course*"
+            },
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "Part 3: Development Environment Checklist (20 points)"
+            },
+            {
+              "type": "text",
+              "content": "Create a second file called SETUP.md in your repository that documents your development environment:"
+            },
+            {
+              "type": "code",
+              "language": "markdown",
+              "code": "# Development Environment Setup\n\n## ✅ Installed Software\n\n### Code Editor\n- **VS Code** version: [your version]\n- Extensions installed:\n  - Live Server\n  - Prettier\n  - ESLint\n  - GitLens\n  - [any others you installed]\n\n### Version Control\n- **Git** version: [run `git --version`]\n\n### Runtime & Package Manager\n- **Node.js** version: [run `node --version`]\n- **npm** version: [run `npm --version`]\n\n### Browser\n- **Browser**: [e.g., Google Chrome 120.0]\n- Developer tools: ✅ Confirmed working\n\n## 🖥️ Operating System\n- OS: [e.g., macOS Sonoma 14.2, Windows 11, Ubuntu 22.04]\n\n## ✅ Verification\nAll commands run successfully:\n```bash\nnode --version\nnpm --version\ngit --version\ncode .\n```\n\n## 📝 Notes\n[Any issues you encountered and how you solved them]\n[Any additional tools you installed]\n\nSetup completed on: [date]"
+            },
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "Submission Instructions"
+            },
+            {
+              "type": "list",
+              "ordered": true,
+              "items": [
+                "Complete all three parts of the assignment",
+                "Commit your changes with meaningful commit messages (e.g., 'Add personal README', 'Create setup documentation')",
+                "Push all changes to your GitHub repository",
+                "Verify your repository is PUBLIC and accessible",
+                "Submit your GitHub PROFILE URL (not just the repository) via the course portal",
+                "After submission, you'll be assigned 2 peer reviews to complete within 3 days"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "Grading Rubric (100 points total)"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "✓ GitHub Account Setup (20 pts): Profile picture, bio, professional appearance",
+                "✓ Repository Creation (20 pts): Correct name, public, properly initialized",
+                "✓ Personal README Content (30 pts): Complete, thoughtful, specific answers to all sections",
+                "✓ Markdown Formatting (10 pts): Proper headers, lists, emphasis, clean presentation",
+                "✓ Setup Documentation (20 pts): SETUP.md with all software versions and verification"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "Peer Review Guidelines"
+            },
+            {
+              "type": "text",
+              "content": "After submitting, you'll review 2 classmates' submissions. Focus on:"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Is the GitHub profile professional? (picture, bio)",
+                "Is the README complete with all required sections?",
+                "Is the Markdown formatting correct and readable?",
+                "Is the writing clear and free of obvious errors?",
+                "Provide at least one specific positive comment",
+                "Provide at least one constructive suggestion for improvement"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "Common Mistakes to Avoid"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "❌ Making the repository private (must be public!)",
+                "❌ Submitting repository URL instead of profile URL",
+                "❌ Not pushing changes to GitHub (only on local machine)",
+                "❌ Writing vague or minimal content ('I want to learn coding')",
+                "❌ Forgetting profile picture and bio",
+                "❌ Copy-pasting the template without customizing it",
+                "❌ Not including actual version numbers in SETUP.md"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "Need Help?"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "📺 Review Lesson 4 videos on Git and GitHub",
+                "💬 Ask questions in the course Discord #week0-help channel",
+                "📖 Check GitHub's official documentation: docs.github.com",
+                "🎯 Attend office hours: Monday & Wednesday, 2-4 PM ET"
+              ]
+            },
+            {
+              "type": "text",
+              "content": "Good luck! This is the foundation of your developer portfolio. Make it count! 🚀"
+            }
+          ]
+        },
+        {
+          "title": "Code Challenge: Repository Checker",
+          "description": "Practice Git commands by creating a repository structure - auto-graded!",
+          "content": [
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "🏆 Code Challenge: Repository Setup Checker"
+            },
+            {
+              "type": "text",
+              "content": "This challenge tests your Git and command line skills. You'll create a specific repository structure, and our automated system will verify your work by checking your GitHub repository."
+            },
+            {
+              "type": "assignment",
+              "assignmentType": "code-challenge",
+              "title": "Git Repository Structure Challenge",
+              "description": "Create a GitHub repository with the exact file structure specified. Our automated checker will verify your repository has all required files and folders in the correct locations.",
+              "dueDate": "2026-02-24T23:59:00",
+              "points": 50,
+              "submissionType": "url",
+              "codeCheckingEnabled": true,
+              "codeChecking": {
+                "language": "repository",
+                "repoName": "week0-git-challenge",
+                "requiredFiles": [
+                  "README.md",
+                  "index.html",
+                  "css/style.css",
+                  "js/script.js",
+                  "images/.gitkeep",
+                  "docs/setup.md"
+                ],
+                "mainFile": "README.md",
+                "testingType": "file-structure",
+                "testCases": [
+                  {
+                    "name": "Repository exists and is public",
+                    "points": 10,
+                    "description": "Repository must be public and accessible"
+                  },
+                  {
+                    "name": "Has README.md in root",
+                    "points": 10,
+                    "description": "README.md file exists in repository root"
+                  },
+                  {
+                    "name": "Has proper folder structure",
+                    "points": 10,
+                    "description": "css/, js/, images/, and docs/ folders exist"
+                  },
+                  {
+                    "name": "All required files present",
+                    "points": 15,
+                    "description": "All 6 required files exist in correct locations"
+                  },
+                  {
+                    "name": "At least 3 commits made",
+                    "points": 5,
+                    "description": "Repository has at least 3 meaningful commits"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Requirements"
+            },
+            {
+              "type": "text",
+              "content": "Create a GitHub repository named 'week0-git-challenge' with this exact structure:"
+            },
+            {
+              "type": "code",
+              "language": "text",
+              "code": "week0-git-challenge/\n├── README.md\n├── index.html\n├── css/\n│   └── style.css\n├── js/\n│   └── script.js\n├── images/\n│   └── .gitkeep\n└── docs/\n    └── setup.md"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Step-by-Step Instructions"
+            },
+            {
+              "type": "list",
+              "ordered": true,
+              "items": [
+                "Create a new repository on GitHub named 'week0-git-challenge' (public)",
+                "Clone it to your local machine: git clone [your-repo-url]",
+                "Navigate into the folder: cd week0-git-challenge",
+                "Create the required folders: mkdir css js images docs",
+                "Create all required files using touch (Mac/Linux) or echo. > (Windows)",
+                "Add content to README.md (at least 3 sentences about the challenge)",
+                "Create a .gitkeep file in images/ folder (keeps empty folder in Git)",
+                "Commit your work with meaningful messages",
+                "Push to GitHub: git push origin main"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Submission"
+            },
+            {
+              "type": "text",
+              "content": "Submit the URL to your GitHub repository (e.g., https://github.com/your-username/week0-git-challenge)"
+            },
+            {
+              "type": "text",
+              "content": "The automated checker will verify your repository structure within seconds and display your score immediately!"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Tips"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Make sure your repository is PUBLIC, not private",
+                "Use 'git status' frequently to check what you've changed",
+                "Make separate commits for different steps",
+                "Double-check file names and folder structure - they must match exactly",
+                "The .gitkeep file is important - it lets Git track empty folders"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Final Quiz: Week 0 Comprehensive Assessment",
+          "description": "Test your understanding of all Week 0 concepts",
+          "content": [
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "📊 Week 0 Comprehensive Quiz"
+            },
+            {
+              "type": "text",
+              "content": "This quiz covers all topics from Week 0. You have 30 minutes and 2 attempts. Take your time and review the lessons if needed before starting!"
+            },
+            {
+              "type": "quiz",
+              "title": "Week 0 Final Assessment",
+              "timeLimit": 30,
+              "attempts": 2,
+              "questions": [
+                {
+                  "id": "q_final_01",
+                  "type": "multiple_choice",
+                  "question": "What is the primary benefit of using Git for version control?",
+                  "options": [
+                    "It makes your code run faster",
+                    "It tracks changes and lets you revert to previous versions",
+                    "It automatically fixes bugs in your code",
+                    "It converts your code to different programming languages"
+                  ],
+                  "correctAnswer": 1,
+                  "points": 10,
+                  "explanation": "Git tracks every change you make to your code, allowing you to see the history, compare versions, and revert to previous states if something breaks."
+                },
+                {
+                  "id": "q_final_02",
+                  "type": "multiple_choice",
+                  "question": "Which command creates a new directory named 'project'?",
+                  "options": [
+                    "create project",
+                    "new project",
+                    "mkdir project",
+                    "cd project"
+                  ],
+                  "correctAnswer": 2,
+                  "points": 10,
+                  "explanation": "'mkdir' stands for 'make directory' and is used to create new folders from the command line."
+                },
+                {
+                  "id": "q_final_03",
+                  "type": "multiple_choice",
+                  "question": "In full-stack development, what does the backend handle?",
+                  "options": [
+                    "Visual design and styling",
+                    "User interface components",
+                    "Server logic, databases, and authentication",
+                    "HTML structure"
+                  ],
+                  "correctAnswer": 2,
+                  "points": 10,
+                  "explanation": "The backend handles server-side logic including business rules, database operations, authentication, API endpoints, and data processing."
+                },
+                {
+                  "id": "q_final_04",
+                  "type": "multiple_choice",
+                  "question": "What file extension do CSS files use?",
+                  "options": [
+                    ".html",
+                    ".css",
+                    ".js",
+                    ".style"
+                  ],
+                  "correctAnswer": 1,
+                  "points": 10,
+                  "explanation": "CSS (Cascading Style Sheets) files use the .css extension. Example: style.css, main.css"
+                },
+                {
+                  "id": "q_final_05",
+                  "type": "multiple_choice",
+                  "question": "What does 'git push' do?",
+                  "options": [
+                    "Creates a new repository",
+                    "Deletes files from your computer",
+                    "Uploads your commits to a remote repository (like GitHub)",
+                    "Downloads code from GitHub"
+                  ],
+                  "correctAnswer": 2,
+                  "points": 10,
+                  "explanation": "'git push' uploads your local commits to a remote repository, making your changes available online and to collaborators."
+                },
+                {
+                  "id": "q_final_06",
+                  "type": "multiple_choice",
+                  "question": "Which VS Code extension provides a live preview of your HTML?",
+                  "options": [
+                    "Prettier",
+                    "ESLint",
+                    "Live Server",
+                    "GitLens"
+                  ],
+                  "correctAnswer": 2,
+                  "points": 10,
+                  "explanation": "Live Server launches a local development server with live reload, automatically refreshing your browser when you save changes to your HTML, CSS, or JavaScript files."
+                },
+                {
+                  "id": "q_final_07",
+                  "type": "multiple_choice",
+                  "question": "What does HTML stand for?",
+                  "options": [
+                    "Hyperlinks and Text Markup Language",
+                    "HyperText Markup Language",
+                    "Home Tool Markup Language",
+                    "Hyperlinks Text Modern Language"
+                  ],
+                  "correctAnswer": 1,
+                  "points": 10,
+                  "explanation": "HTML stands for HyperText Markup Language. It's the standard markup language for creating web pages and defines the structure and content."
+                },
+                {
+                  "id": "q_final_08",
+                  "type": "multiple_choice",
+                  "question": "What is a repository in Git?",
+                  "options": [
+                    "A website hosting service",
+                    "A folder that Git tracks, containing files and their history",
+                    "A type of programming language",
+                    "A code editor"
+                  ],
+                  "correctAnswer": 1,
+                  "points": 10,
+                  "explanation": "A repository (repo) is a folder that Git tracks. It contains all your project files plus the complete history of changes made to those files."
+                },
+                {
+                  "id": "q_final_09",
+                  "type": "multiple_choice",
+                  "question": "Which technology is used for styling web pages?",
+                  "options": [
+                    "HTML",
+                    "JavaScript",
+                    "CSS",
+                    "Python"
+                  ],
+                  "correctAnswer": 2,
+                  "points": 10,
+                  "explanation": "CSS (Cascading Style Sheets) is used to style web pages, controlling colors, fonts, layouts, spacing, and visual presentation."
+                },
+                {
+                  "id": "q_final_10",
+                  "type": "multiple_choice",
+                  "question": "What does 'pwd' display in the terminal?",
+                  "options": [
+                    "A list of files in a directory",
+                    "Your current directory path",
+                    "Your password",
+                    "The previous working directory"
+                  ],
+                  "correctAnswer": 1,
+                  "points": 10,
+                  "explanation": "'pwd' stands for 'Print Working Directory' and displays the full path of your current location in the file system."
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "content": "After completing this quiz, you're done with Week 0! Great job on completing the foundation week. You're now ready to start building real web applications in Week 1!"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

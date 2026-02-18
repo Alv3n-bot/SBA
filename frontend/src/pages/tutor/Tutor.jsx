@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { auth, db } from '../../firebase';
 import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
-import CourseBuilder from './CourseBuilder';
+import CourseBuilder from './CourseBuilder'; // Updated import path
 
 export default function Teacher() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);

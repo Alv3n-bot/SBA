@@ -185,8 +185,43 @@ export default function CourseLearning() {
   };
 
   // ==================== COHORT MANAGEMENT ====================
-  const loadOrCreateCohort = async (userId, courseId) => {
-    try {
+  // ==================== COHORT MANAGEMENT ====================
+// This replaces the loadOrCreateCohort function in CourseLearning.jsx
+
+const loadOrCreateCohort = async (userId, courseId) => {
+  try {
+    // First, check user's enrollments mapping to get the cohort ID
+    const userDoc = await getDoc(doc(db, 'users', userId));
+    
+    if (!userDoc.exists()) {
+      console.error('User document not found');
+      return;
+    }
+    
+    const userData = userDoc.data();
+    const enrollments = userData.enrollments || {};
+    const cohortId = enrollments[courseId];
+    
+    if (cohortId) {
+      // Load the assigned cohort
+      const cohortDoc = await getDoc(doc(db, 'cohorts', cohortId));
+      
+      if (cohortDoc.exists()) {
+        const cohortData = cohortDoc.data();
+        setCohort({ 
+          id: cohortDoc.id, 
+          ...cohortData,
+          startDate: cohortData.startDate?.toDate ? cohortData.startDate.toDate() : cohortData.startDate,
+          endDate: cohortData.endDate?.toDate ? cohortData.endDate.toDate() : cohortData.endDate
+        });
+        console.log(`Loaded cohort: ${cohortData.name}`);
+      } else {
+        console.error('Cohort document not found for ID:', cohortId);
+      }
+    } else {
+      // Fallback: Search by studentIds (shouldn't happen if enrollment flow is correct)
+      console.warn('No cohort mapping found in enrollments, searching by studentIds...');
+      
       const cohortQuery = query(
         collection(db, 'cohorts'),
         where('courseId', '==', courseId),
@@ -196,47 +231,21 @@ export default function CourseLearning() {
 
       if (!cohortSnapshot.empty) {
         const cohortData = cohortSnapshot.docs[0].data();
-        setCohort({ id: cohortSnapshot.docs[0].id, ...cohortData });
+        setCohort({ 
+          id: cohortSnapshot.docs[0].id, 
+          ...cohortData,
+          startDate: cohortData.startDate?.toDate ? cohortData.startDate.toDate() : cohortData.startDate,
+          endDate: cohortData.endDate?.toDate ? cohortData.endDate.toDate() : cohortData.endDate
+        });
+        console.log(`Found cohort via search: ${cohortData.name}`);
       } else {
-        const allCohortsQuery = query(
-          collection(db, 'cohorts'),
-          where('courseId', '==', courseId),
-          where('status', '==', 'active')
-        );
-        const allCohortsSnapshot = await getDocs(allCohortsQuery);
-        let targetCohort = null;
-
-        for (const docSnap of allCohortsSnapshot.docs) {
-          const data = docSnap.data();
-          if ((data.studentIds?.length || 0) < FIREBASE_CONFIG.COHORT_MAX_SIZE) {
-            targetCohort = { id: docSnap.id, ...data };
-            break;
-          }
-        }
-
-        if (targetCohort) {
-          await updateDoc(doc(db, 'cohorts', targetCohort.id), {
-            studentIds: [...(targetCohort.studentIds || []), userId],
-            updatedAt: serverTimestamp()
-          });
-          setCohort(targetCohort);
-        } else {
-          const newCohort = {
-            courseId,
-            name: `Cohort ${allCohortsSnapshot.size + 1}`,
-            studentIds: [userId],
-            status: 'active',
-            createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp()
-          };
-          const cohortRef = await addDoc(collection(db, 'cohorts'), newCohort);
-          setCohort({ id: cohortRef.id, ...newCohort });
-        }
+        console.error('Student not assigned to any cohort for this course');
       }
-    } catch (err) {
-      console.error('Error managing cohort:', err);
     }
-  };
+  } catch (err) {
+    console.error('Error loading cohort:', err);
+  }
+};    
 
   // ==================== PROGRESS MANAGEMENT WITH CACHE ====================
   const loadOrCreateProgressWithCache = async (userId, courseId, courseData) => {
@@ -705,7 +714,7 @@ export default function CourseLearning() {
                     onUrlSubmit={handleUrlSubmission}
                     onQuizComplete={(quizId, result) => {
                       handleQuizComplete(quizId, result);
-                      onCodeSubmissionComplete(() => loadCodeSubmissions(auth.currentUser.uid, courseId)) // NEW
+                      
                     }}
                   />
                 ))

@@ -10,15 +10,16 @@ export default function VideoBlock({ block }) {
   const embedUrl = getYouTubeEmbedUrl(block.url);
 
   return (
-    <div className="mb-4 max-w-md mx-auto">
+    <div className="mb-6 max-w-2xl">
       {block.title && (
         <h4 className="text-base font-semibold text-gray-900 mb-2 flex items-center gap-2">
           <Play className="w-4 h-4 text-gray-800" />
           {block.title}
         </h4>
       )}
+
       {embedUrl ? (
-        <div className="aspect-video rounded-md overflow-hidden shadow-sm border border-gray-200">
+        <div className="w-full aspect-video rounded-md overflow-hidden shadow-sm border border-gray-200">
           <iframe
             src={embedUrl}
             className="w-full h-full"
@@ -27,16 +28,19 @@ export default function VideoBlock({ block }) {
           ></iframe>
         </div>
       ) : block.url ? (
-        <video
-          src={block.url}
-          controls
-          className="w-full rounded-md shadow-sm"
-        />
+        <div className="w-full aspect-video rounded-md overflow-hidden shadow-sm border border-gray-200">
+          <video
+            src={block.url}
+            controls
+            className="w-full h-full object-cover rounded-md"
+          />
+        </div>
       ) : (
-        <div className="aspect-video bg-gray-100 rounded-md flex items-center justify-center">
+        <div className="w-full aspect-video bg-gray-100 rounded-md flex items-center justify-center">
           <p className="text-gray-500 text-sm">No video available</p>
         </div>
       )}
+
       {block.description && (
         <p className="text-gray-600 mt-2 text-sm">{block.description}</p>
       )}

@@ -59,7 +59,7 @@ export default function PaywallScreen() {
             <p className="text-gray-600 text-sm">Access all courses for 90 days</p>
           </div>
           <button
-            onClick={() => navigate('/settings')}
+            onClick={() => navigate('/ehub')}
             className="w-full bg-gray-800 text-white py-3 rounded-md font-bold text-base hover:bg-gray-700 transition-all flex items-center justify-center gap-1"
           >
             <CreditCard className="w-4 h-4" />
@@ -69,7 +69,7 @@ export default function PaywallScreen() {
             onClick={() => navigate('/ehub')}
             className="w-full mt-2 text-gray-600 hover:text-gray-900 font-medium py-2 text-base"
           >
-            Back to Dashboard
+            EHub
           </button>
         </div>
       </div>

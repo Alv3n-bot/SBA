@@ -1,6 +1,7 @@
 // src/utils/enrollmentUtils.js
 import { doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { db } from '../firebase';
+import { findOrCreateCohort, addStudentToCohort } from './cohortUtils';
 
 /**
  * Check if user can enroll in a course
@@ -11,7 +12,6 @@ import { db } from '../firebase';
 export const canEnrollInCourse = async (userId, courseId) => {
   try {
     const userDoc = await getDoc(doc(db, 'users', userId));
-    
     if (!userDoc.exists()) {
       return { canEnroll: false, reason: 'User not found' };
     }
@@ -48,21 +48,51 @@ export const canEnrollInCourse = async (userId, courseId) => {
 };
 
 /**
- * Enroll user in a course
+ * Enroll user in a course with automatic cohort assignment
  * @param {string} userId - Firebase user ID
  * @param {string} courseId - Course ID to enroll in
- * @returns {Promise<{success: boolean, error?: string}>}
+ * @returns {Promise<{success: boolean, cohort?: object, error?: string}>}
  */
 export const enrollInCourse = async (userId, courseId) => {
   try {
-    const userRef = doc(db, 'users', userId);
+    console.log(`Starting enrollment for user ${userId} in course ${courseId}`);
     
-    // Add course to user's enrolledCourses array
+    // 1. Find or create cohort for this course
+    const cohort = await findOrCreateCohort(courseId, new Date());
+    console.log(`Cohort determined: ${cohort.name} (ID: ${cohort.id})`);
+    
+    // 2. Add student to cohort
+    await addStudentToCohort(cohort.id, userId);
+    console.log(`Student added to cohort ${cohort.name}`);
+    
+    // 3. Update user's enrolled courses array
+    const userRef = doc(db, 'users', userId);
     await updateDoc(userRef, {
       enrolledCourses: arrayUnion(courseId)
     });
-
-    return { success: true };
+    console.log(`Added ${courseId} to user's enrolledCourses`);
+    
+    // 4. Update user's enrollments mapping (courseId -> cohortId)
+    const userDoc = await getDoc(userRef);
+    const currentEnrollments = userDoc.data()?.enrollments || {};
+    
+    await updateDoc(userRef, {
+      enrollments: {
+        ...currentEnrollments,
+        [courseId]: cohort.id
+      }
+    });
+    console.log(`Mapped ${courseId} to cohort ${cohort.id} in user's enrollments`);
+    
+    return { 
+      success: true,
+      cohort: {
+        id: cohort.id,
+        name: cohort.name,
+        startDate: cohort.startDate,
+        endDate: cohort.endDate
+      }
+    };
   } catch (error) {
     console.error('Error enrolling in course:', error);
     return { success: false, error: error.message };
@@ -77,11 +107,9 @@ export const enrollInCourse = async (userId, courseId) => {
 export const getEnrolledCourses = async (userId) => {
   try {
     const userDoc = await getDoc(doc(db, 'users', userId));
-    
     if (!userDoc.exists()) {
       return [];
     }
-
     const userData = userDoc.data();
     return userData.enrolledCourses || [];
   } catch (error) {
@@ -107,12 +135,18 @@ export const unenrollFromCourse = async (userId, courseId) => {
 
     const userData = userDoc.data();
     const enrolledCourses = userData.enrolledCourses || [];
-    
+    const enrollments = userData.enrollments || {};
+
     // Remove course from enrolledCourses array
     const updatedCourses = enrolledCourses.filter(id => id !== courseId);
     
+    // Remove course from enrollments mapping
+    const updatedEnrollments = { ...enrollments };
+    delete updatedEnrollments[courseId];
+
     await updateDoc(userRef, {
-      enrolledCourses: updatedCourses
+      enrolledCourses: updatedCourses,
+      enrollments: updatedEnrollments
     });
 
     return { success: true };

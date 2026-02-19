@@ -114,12 +114,7 @@ function EHubHeader({ userData, onOpenSettings, onOpenNotifications }) {
               className="w-12 h-12 cursor-pointer"
               onClick={handleHome}
             />
-            <h1 
-              className="text-xl font-bold text-gray-900 cursor-pointer"
-              onClick={handleHome}
-            >
-              EHub
-            </h1>
+        
           </div>
 
           {/* Center Navigation */}

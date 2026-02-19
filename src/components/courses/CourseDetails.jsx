@@ -1,21 +1,25 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { auth } from '../../firebase';
 import logo192 from '../../assets/favicon_io/android-chrome-192x192.png';
-import courseData from '../../data/ courseData.json';
+import courseData from '../../data/courseData.json';
 import { canEnrollInCourse, enrollInCourse, unenrollFromCourse } from '../../utils/enrollmentUtils';
-import { 
-  Clock, 
-  Award, 
-  CheckCircle, 
-  Users, 
-  BookOpen, 
-  Star,
+import {
+  Clock,
+  Award,
+  CheckCircle,
+  Users,
+  BookOpen,
   ArrowRight,
   ChevronDown,
   AlertCircle,
   Loader2,
-  XCircle
+  XCircle,
+  X,
+  ChevronRight,
+  Shield,
+  TrendingUp,
 } from 'lucide-react';
 
 export default function CourseDetails() {
@@ -28,38 +32,38 @@ export default function CourseDetails() {
   const [enrolling, setEnrolling] = useState(false);
   const [unenrolling, setUnenrolling] = useState(false);
   const [error, setError] = useState(null);
+  const [successMsg, setSuccessMsg] = useState(null);
   const [showMaxCoursesModal, setShowMaxCoursesModal] = useState(false);
   const [showUnenrollModal, setShowUnenrollModal] = useState(false);
-  
+  const [showWelcomeScreen, setShowWelcomeScreen] = useState(false);
+  const [showAssessmentModal, setShowAssessmentModal] = useState(false);
+  const [assignedCohort, setAssignedCohort] = useState(null);
+  const [assessmentData, setAssessmentData] = useState({
+    whyJoin: '', experienceLevel: '', learningGoals: '', weeklyCommitment: ''
+  });
+
   const course = courseData[courseId];
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
       setUser(currentUser);
-      
       if (currentUser) {
-        // Check enrollment status
         const eligibility = await canEnrollInCourse(currentUser.uid, courseId);
-        if (eligibility.reason === 'already_enrolled') {
-          setIsEnrolled(true);
-        }
+        if (eligibility.reason === 'already_enrolled') setIsEnrolled(true);
         setEnrolledCourses(eligibility.enrolledCourses || []);
       }
     });
     return () => unsubscribe();
   }, [courseId]);
 
-  // If course doesn't exist, show 404
   if (!course) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Course Not Found</h1>
-          <p className="text-gray-600 mb-8">The course you're looking for doesn't exist.</p>
-          <button 
-            onClick={() => navigate('/')}
-            className="bg-black text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-800"
-          >
+          <p className="text-sm font-semibold text-gray-500 uppercase tracking-widest mb-3">404</p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-3">Course Not Found</h1>
+          <p className="text-gray-500 mb-8">The program you're looking for doesn't exist.</p>
+          <button onClick={() => navigate('/')} className="bg-black text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors">
             Back to Home
           </button>
         </div>
@@ -67,49 +71,41 @@ export default function CourseDetails() {
     );
   }
 
-  const handleEnroll = async () => {
+  // ── Handlers ──────────────────────────────────────────────────────────────────
+  const handleEnrollClick = async () => {
     setError(null);
-
-    // If not logged in, redirect to EHub login
-    if (!user) {
-      navigate('/ehub');
-      return;
-    }
-
-    // If course is closed, don't allow enrollment
+    if (!user) { navigate('/ehub'); return; }
+    if (isEnrolled) { navigate(`/learn/${courseId}`); return; }
     if (!course.isOpen) {
-      setError('This course is currently closed for enrollment.');
+      setError('This program is currently closed for enrollment. Join the waitlist to be notified when it opens.');
       return;
     }
-
-    // If already enrolled, go to learning page
-    if (isEnrolled) {
-      navigate(`/learn/${courseId}`);
-      return;
-    }
-
-    // Check enrollment eligibility
     const eligibility = await canEnrollInCourse(user.uid, courseId);
-
     if (!eligibility.canEnroll) {
-      if (eligibility.reason === 'max_courses_reached') {
-        setShowMaxCoursesModal(true);
-        return;
-      }
-      setError('Unable to enroll. Please try again.');
+      if (eligibility.reason === 'max_courses_reached') { setShowMaxCoursesModal(true); return; }
+      setError('Unable to enroll at this time. Please try again.');
       return;
     }
+    setShowWelcomeScreen(true);
+  };
 
-    // Enroll the user
+  const handleAssessmentSubmit = async (e) => {
+    e.preventDefault();
+    if (!assessmentData.whyJoin || !assessmentData.experienceLevel ||
+        !assessmentData.learningGoals || !assessmentData.weeklyCommitment) {
+      setError('Please answer all questions before submitting.');
+      return;
+    }
+    setShowAssessmentModal(false);
+    setError(null);
     setEnrolling(true);
     const result = await enrollInCourse(user.uid, courseId);
-
     if (result.success) {
       setIsEnrolled(true);
-      // Show success message briefly then redirect
-      setTimeout(() => {
-        navigate('/ehub');
-      }, 1500);
+      setAssignedCohort(result.cohort);
+      setSuccessMsg('Successfully enrolled! Redirecting to your dashboard…');
+      setAssessmentData({ whyJoin: '', experienceLevel: '', learningGoals: '', weeklyCommitment: '' });
+      setTimeout(() => navigate('/ehub'), 2500);
     } else {
       setError('Enrollment failed. Please try again.');
     }
@@ -118,460 +114,719 @@ export default function CourseDetails() {
 
   const handleUnenroll = async () => {
     if (!user) return;
-
     setUnenrolling(true);
-    setError(null);
-
     const result = await unenrollFromCourse(user.uid, courseId);
-
     if (result.success) {
       setIsEnrolled(false);
+      setAssignedCohort(null);
       setShowUnenrollModal(false);
-      // Show success message briefly
-      setTimeout(() => {
-        navigate('/ehub');
-      }, 1000);
+      setSuccessMsg('Successfully dropped. Redirecting…');
+      setTimeout(() => navigate('/ehub'), 1200);
     } else {
-      setError('Failed to unenroll. Please try again.');
+      setError('Failed to drop this course. Please try again.');
       setShowUnenrollModal(false);
     }
     setUnenrolling(false);
   };
 
-  const getEnrollButtonText = () => {
-    if (!user) return course.isOpen ? 'Login to Enroll' : 'Login to Join Waitlist';
-    if (isEnrolled) return 'Go to Course';
-    if (!course.isOpen) return 'Join Waitlist';
-    if (enrolling) return 'Enrolling...';
-    return 'Enroll Now';
+  const enrollBtnLabel = () => {
+    if (!user) return course.isOpen ? 'Sign In to Enroll' : 'Sign In to Join Waitlist';
+    if (enrolling) return 'Processing…';
+    if (isEnrolled) return 'Continue Learning';
+    return course.isOpen ? 'Enroll Now' : 'Join Waitlist';
   };
 
-  const getEnrollButtonClass = () => {
-    const baseClass = "px-8 py-4 rounded-full font-bold text-lg transition-all flex items-center justify-center gap-2";
-    
-    if (isEnrolled) {
-      return `${baseClass} bg-green-600 text-white hover:bg-green-700`;
-    }
-    
-    if (!course.isOpen) {
-      return `${baseClass} bg-gray-800 text-white hover:bg-gray-700`;
-    }
-    
-    return `${baseClass} bg-black text-white hover:bg-gray-800 ${enrolling ? 'opacity-75 cursor-not-allowed' : ''}`;
+  // ── SEO structured data ────────────────────────────────────────────────────
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'Course',
+    name: course.title,
+    description: course.description,
+    provider: { '@type': 'EducationalOrganization', name: 'SBA Tech School', url: 'https://sbatechschool.com' },
+    courseMode: 'online',
+    educationalLevel: course.level,
+    timeRequired: course.duration,
+    url: `https://sbatechschool.com/course/${courseId}`,
+    offers: {
+      '@type': 'Offer', price: course.price, priceCurrency: 'USD',
+      availability: course.isOpen ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      validFrom: course.startDate,
+    },
+    ...(course.instructor && {
+      instructor: { '@type': 'Person', name: course.instructor.name, jobTitle: course.instructor.title }
+    }),
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
+    <>
+      <Helmet>
+        <title>{course.title} | SBA Tech School</title>
+        <meta name="description" content={`${course.subtitle} — ${course.duration}, ${course.level}. ${course.description?.slice(0, 145)}…`} />
+        <link rel="canonical" href={`https://sbatechschool.com/course/${courseId}`} />
+        <meta property="og:title" content={`${course.title} | SBA Tech School`} />
+        <meta property="og:description" content={course.subtitle} />
+        <meta property="og:type" content="website" />
+        <script type="application/ld+json">{JSON.stringify(structuredData)}</script>
+      </Helmet>
+
+      <div className="min-h-screen bg-gray-50">
+
+        {/* ── HEADER ── */}
+        <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <img src={logo192} alt="Logo" className="w-10 h-10" />
-              <button 
-                onClick={() => navigate(user ? '/ehub' : '/')} 
-                className="text-gray-600 hover:text-gray-900 font-semibold"
+              <img src={logo192} alt="SBA Tech School" className="w-9 h-9" />
+              <button
+                onClick={() => navigate(user ? '/ehub' : '/')}
+                className="text-sm text-gray-500 hover:text-gray-900 font-semibold transition-colors"
               >
                 ← Back to {user ? 'Dashboard' : 'Home'}
               </button>
             </div>
-            {!user && (
-              <button
-                onClick={() => navigate('/ehub')}
-                className="bg-black text-white px-6 py-2 rounded-full font-semibold hover:bg-gray-800"
-              >
-                Sign In
-              </button>
-            )}
-          </div>
-        </div>
-      </header>
-
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-blue-50 to-indigo-100 py-12 lg:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-            {/* Left Content */}
-            <div>
-              {/* Status Badge */}
-              <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full font-bold text-sm mb-4 ${
-                course.isOpen 
-                  ? 'bg-green-500 text-white' 
-                  : 'bg-gray-800 text-white'
-              }`}>
-                {course.isOpen ? '✓ Open for Enrollment' : '🔒 Enrollment Closed'}
-              </div>
-
-              {/* Enrolled Badge */}
+            <div className="flex items-center gap-3">
               {isEnrolled && (
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full font-bold text-sm mb-4 ml-2 bg-green-100 text-green-800">
-                  ✓ You're Enrolled
-                </div>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-100 text-green-800 text-xs font-bold rounded-full">
+                  <CheckCircle className="w-3.5 h-3.5" /> Enrolled
+                </span>
               )}
-
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-4">
-                {course.title}
-              </h1>
-              <p className="text-xl text-gray-700 mb-6">
-                {course.subtitle}
-              </p>
-
-              {/* Course Meta */}
-              <div className="flex flex-wrap gap-6 mb-8">
-                <div className="flex items-center gap-2">
-                  <Clock className="w-5 h-5 text-gray-600" />
-                  <span className="text-gray-700 font-medium">{course.duration}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Award className="w-5 h-5 text-gray-600" />
-                  <span className="text-gray-700 font-medium">{course.level}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <BookOpen className="w-5 h-5 text-gray-600" />
-                  <span className="text-gray-700 font-medium">{course.price}</span>
-                </div>
-              </div>
-
-              {/* Error Message */}
-              {error && (
-                <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
-                  <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-                  <p className="text-red-800 text-sm">{error}</p>
-                </div>
-              )}
-
-              {/* Success Message */}
-              {isEnrolled && enrolling === false && (
-                <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                  <p className="text-green-800 text-sm">Successfully enrolled! Redirecting to dashboard...</p>
-                </div>
-              )}
-
-              {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4">
+              {!user && (
                 <button
-                  onClick={handleEnroll}
-                  disabled={enrolling || (!course.isOpen && user)}
-                  className={getEnrollButtonClass()}
+                  onClick={() => navigate('/ehub')}
+                  className="px-5 py-2 bg-black text-white text-sm font-bold rounded-lg hover:bg-gray-800 transition-colors"
                 >
-                  {enrolling && <Loader2 className="w-5 h-5 animate-spin" />}
-                  {getEnrollButtonText()}
-                  {!enrolling && <ArrowRight className="w-5 h-5" />}
+                  Sign In
                 </button>
-                
-                {/* Unenroll Button - Only show if enrolled */}
-                {isEnrolled && user && (
-                  <button
-                    onClick={() => setShowUnenrollModal(true)}
-                    className="px-8 py-4 border-2 border-red-600 text-red-600 rounded-full font-bold text-lg hover:bg-red-600 hover:text-white transition-all flex items-center justify-center gap-2"
-                  >
-                    <XCircle className="w-5 h-5" />
-                    Drop Course
-                  </button>
-                )}
-                
-                {/* Download Syllabus - Only show if not enrolled */}
-                {!isEnrolled && (
-                  <button className="px-8 py-4 border-2 border-gray-900 text-gray-900 rounded-full font-bold text-lg hover:bg-gray-900 hover:text-white transition-all">
-                    Download Syllabus
-                  </button>
-                )}
-              </div>
-
-              {course.isOpen && !isEnrolled && (
-                <p className="mt-4 text-sm text-gray-600 flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  Next cohort starts {course.startDate}
-                </p>
               )}
             </div>
-
-            {/* Right Video */}
-            <div className="order-first lg:order-last">
-              <div className="aspect-video rounded-2xl overflow-hidden shadow-2xl">
-                <iframe
-                  width="100%"
-                  height="100%"
-                  src={`https://www.youtube.com/embed/${course.videoId}`}
-                  title={`${course.title} Introduction`}
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="w-full h-full"
-                ></iframe>
-              </div>
-            </div>
           </div>
-        </div>
-      </section>
+        </header>
 
-      {/* Max Courses Modal */}
-      {showMaxCoursesModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-8 max-w-md w-full">
-            <div className="flex items-start gap-4 mb-4">
-              <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <AlertCircle className="w-6 h-6 text-orange-600" />
-              </div>
+        {/* ── HERO ── */}
+        <section className="bg-gray-900 py-12 lg:py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+
+              {/* Left */}
               <div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                  Maximum Courses Reached
-                </h3>
-                <p className="text-gray-600 mb-4">
-                  You can only enroll in 2 courses at a time. You're currently enrolled in:
-                </p>
-                <ul className="space-y-2 mb-4">
-                  {enrolledCourses.map((id) => {
-                    const enrolledCourse = courseData[id];
-                    return (
-                      <li key={id} className="flex items-center gap-2 text-sm text-gray-700">
-                        <CheckCircle className="w-4 h-4 text-green-600" />
-                        {enrolledCourse?.title || id}
-                      </li>
-                    );
-                  })}
-                </ul>
-                <p className="text-gray-600 text-sm">
-                  To enroll in this course, please complete or unenroll from one of your current courses.
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowMaxCoursesModal(false)}
-                className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50"
-              >
-                Close
-              </button>
-              <button
-                onClick={() => {
-                  setShowMaxCoursesModal(false);
-                  navigate('/ehub');
-                }}
-                className="flex-1 px-6 py-3 bg-black text-white rounded-lg font-semibold hover:bg-gray-800"
-              >
-                Go to Dashboard
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+                {/* Status badges */}
+                <div className="flex flex-wrap gap-2 mb-5">
+                  <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold ${
+                    course.isOpen ? 'bg-green-500 text-white' : 'bg-gray-700 text-gray-300'
+                  }`}>
+                    {course.isOpen ? <><CheckCircle className="w-3.5 h-3.5" /> Open for Enrollment</> : '🔒 Enrollment Closed'}
+                  </span>
+                  {isEnrolled && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-green-100 text-green-800">
+                      <CheckCircle className="w-3.5 h-3.5" /> You're Enrolled
+                    </span>
+                  )}
+                </div>
 
-      {/* Unenroll Confirmation Modal */}
-      {showUnenrollModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-8 max-w-md w-full">
-            <div className="flex items-start gap-4 mb-6">
-              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <XCircle className="w-6 h-6 text-red-600" />
-              </div>
-              <div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                  Drop This Course?
-                </h3>
-                <p className="text-gray-600 mb-2">
-                  Are you sure you want to unenroll from <span className="font-semibold">{course.title}</span>?
+                <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4 leading-tight">
+                  {course.title}
+                </h1>
+                <p className="text-lg text-gray-400 mb-7 leading-relaxed">
+                  {course.subtitle}
                 </p>
-                <p className="text-sm text-gray-500">
-                  Your progress will be saved, and you can re-enroll anytime if the course is still open.
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowUnenrollModal(false)}
-                disabled={unenrolling}
-                className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleUnenroll}
-                disabled={unenrolling}
-                className="flex-1 px-6 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 flex items-center justify-center gap-2"
-              >
-                {unenrolling && <Loader2 className="w-4 h-4 animate-spin" />}
-                {unenrolling ? 'Dropping...' : 'Yes, Drop Course'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
-      {/* What You'll Learn */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-8">
-            What You'll Learn
-          </h2>
-          <div className="grid sm:grid-cols-2 gap-4">
-            {course.whatYouWillLearn.map((item, index) => (
-              <div key={index} className="flex items-start gap-3">
-                <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
-                <span className="text-gray-700 text-lg">{item}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Course Description */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
-              Course Overview
-            </h2>
-            <p className="text-lg text-gray-700 leading-relaxed">
-              {course.description}
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Curriculum */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-8">
-            Curriculum
-          </h2>
-          <div className="space-y-4 max-w-4xl">
-            {course.curriculum.map((module, index) => (
-              <div 
-                key={index} 
-                className="border border-gray-200 rounded-lg overflow-hidden"
-              >
-                <button
-                  onClick={() => setExpandedModule(expandedModule === index ? null : index)}
-                  className="w-full flex items-center justify-between p-6 hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-black text-white rounded-full flex items-center justify-center font-bold">
-                      {index + 1}
+                {/* Meta */}
+                <div className="flex flex-wrap gap-5 mb-7">
+                  {[
+                    { icon: Clock, label: course.duration },
+                    { icon: Award, label: course.level },
+                    { icon: BookOpen, label: course.price },
+                    { icon: Users, label: `${course.students} students` },
+                  ].map(({ icon: Icon, label }) => (
+                    <div key={label} className="flex items-center gap-2 text-gray-300">
+                      <Icon className="w-4 h-4 text-gray-500" />
+                      <span className="text-sm font-medium">{label}</span>
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-900 text-left">
-                      {module.module}
-                    </h3>
-                  </div>
-                  <ChevronDown 
-                    className={`w-5 h-5 text-gray-600 transition-transform ${
-                      expandedModule === index ? 'rotate-180' : ''
-                    }`} 
-                  />
-                </button>
-                
-                {expandedModule === index && (
-                  <div className="px-6 pb-6 bg-gray-50">
-                    <ul className="space-y-2">
-                      {module.topics.map((topic, topicIndex) => (
-                        <li key={topicIndex} className="flex items-center gap-2 text-gray-700">
-                          <div className="w-2 h-2 bg-black rounded-full"></div>
-                          {topic}
-                        </li>
-                      ))}
-                    </ul>
+                  ))}
+                </div>
+
+                {/* Cohort info */}
+                {isEnrolled && assignedCohort && (
+                  <div className="mb-5 p-4 bg-gray-800 border border-gray-700 rounded-xl">
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">Your Cohort</p>
+                    <p className="text-white font-bold">{assignedCohort.name}</p>
+                    <p className="text-gray-400 text-sm mt-0.5">
+                      {new Date(assignedCohort.startDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                      {' — '}
+                      {new Date(assignedCohort.endDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                    </p>
                   </div>
                 )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* Features */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-8">
-            What's Included
-          </h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {course.features.map((feature, index) => (
-              <div 
-                key={index}
-                className="bg-white p-6 rounded-lg border border-gray-200 flex items-start gap-3"
-              >
-                <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0" />
-                <span className="text-gray-700 font-medium">{feature}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+                {/* Alerts */}
+                {error && (
+                  <div className="mb-4 p-3.5 bg-red-900/40 border border-red-700 rounded-lg flex items-start gap-2.5">
+                    <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+                    <p className="text-red-300 text-sm">{error}</p>
+                  </div>
+                )}
+                {successMsg && (
+                  <div className="mb-4 p-3.5 bg-green-900/40 border border-green-700 rounded-lg flex items-start gap-2.5">
+                    <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" />
+                    <p className="text-green-300 text-sm font-medium">{successMsg}</p>
+                  </div>
+                )}
 
-      {/* Instructor */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-8">
-            Meet Your Instructor
-          </h2>
-          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 bg-gray-50 p-8 rounded-2xl max-w-3xl">
-            <img 
-              src={course.instructor.image} 
-              alt={course.instructor.name}
-              className="w-32 h-32 rounded-full object-cover"
-            />
+                {/* CTAs */}
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    onClick={handleEnrollClick}
+                    disabled={enrolling}
+                    className={`px-7 py-3.5 rounded-xl font-bold text-base transition-all flex items-center gap-2 ${
+                      isEnrolled
+                        ? 'bg-green-600 text-white hover:bg-green-700'
+                        : 'bg-white text-black hover:bg-gray-100'
+                    } disabled:opacity-60 disabled:cursor-not-allowed`}
+                  >
+                    {enrolling && <Loader2 className="w-4 h-4 animate-spin" />}
+                    {!enrolling && isEnrolled && <CheckCircle className="w-4 h-4" />}
+                    {enrollBtnLabel()}
+                    {!enrolling && <ArrowRight className="w-4 h-4" />}
+                  </button>
+
+                  {isEnrolled && user && (
+                    <button
+                      onClick={() => setShowUnenrollModal(true)}
+                      className="px-7 py-3.5 border-2 border-red-500 text-red-400 rounded-xl font-bold text-base hover:bg-red-500 hover:text-white transition-all flex items-center gap-2"
+                    >
+                      <XCircle className="w-4 h-4" />
+                      Drop Course
+                    </button>
+                  )}
+                </div>
+
+                {course.isOpen && !isEnrolled && (
+                  <p className="mt-3 text-sm text-gray-500 flex items-center gap-1.5">
+                    <CheckCircle className="w-3.5 h-3.5 text-green-500" />
+                    Next cohort starts <span className="text-gray-300 font-semibold ml-1">{course.startDate}</span>
+                  </p>
+                )}
+              </div>
+
+              {/* Right — video */}
+              <div className="order-first lg:order-last">
+                <div className="aspect-video rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10">
+                  <iframe
+                    width="100%" height="100%"
+                    src={`https://www.youtube.com/embed/${course.videoId}`}
+                    title={`${course.title} — Program Overview`}
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-full"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── BODY ── */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+          <div className="grid lg:grid-cols-3 gap-10 items-start">
+
+            {/* ── MAIN CONTENT (2/3 width) ── */}
+            <div className="lg:col-span-2 space-y-12">
+
+              {/* What You'll Learn */}
+              <section aria-labelledby="learn-heading">
+                <h2 id="learn-heading" className="text-2xl font-bold text-gray-900 mb-6 pb-3 border-b border-gray-200">
+                  What You'll Learn
+                </h2>
+                <div className="grid sm:grid-cols-2 gap-3">
+                  {course.whatYouWillLearn?.map((item, i) => (
+                    <div key={i} className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                      <span className="text-gray-700 text-sm leading-relaxed">{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </section>
+
+              {/* Overview */}
+              <section aria-labelledby="overview-heading">
+                <h2 id="overview-heading" className="text-2xl font-bold text-gray-900 mb-6 pb-3 border-b border-gray-200">
+                  Course Overview
+                </h2>
+                <p className="text-gray-700 leading-relaxed text-base">
+                  {course.description}
+                </p>
+              </section>
+
+              {/* Curriculum */}
+              <section aria-labelledby="curriculum-heading">
+                <h2 id="curriculum-heading" className="text-2xl font-bold text-gray-900 mb-6 pb-3 border-b border-gray-200">
+                  Curriculum
+                </h2>
+                <div className="space-y-3 max-w-3xl">
+                  {course.curriculum?.map((module, i) => (
+                    <div key={i} className="border border-gray-200 rounded-xl overflow-hidden bg-white">
+                      <button
+                        onClick={() => setExpandedModule(expandedModule === i ? null : i)}
+                        className="w-full flex items-center justify-between p-5 hover:bg-gray-50 transition-colors text-left"
+                        aria-expanded={expandedModule === i}
+                      >
+                        <div className="flex items-center gap-4">
+                          <span className={`w-9 h-9 rounded-lg flex items-center justify-center font-bold text-sm flex-shrink-0 transition-colors ${
+                            expandedModule === i ? 'bg-black text-white' : 'bg-gray-100 text-gray-700'
+                          }`}>
+                            {i + 1}
+                          </span>
+                          <span className="font-semibold text-gray-900 text-sm sm:text-base">{module.module}</span>
+                        </div>
+                        <ChevronDown className={`w-5 h-5 text-gray-400 flex-shrink-0 transition-transform ${expandedModule === i ? 'rotate-180' : ''}`} />
+                      </button>
+                      {expandedModule === i && (
+                        <div className="px-5 pb-5 bg-gray-50">
+                          <ul className="space-y-2.5">
+                            {module.topics?.map((topic, j) => (
+                              <li key={j} className="flex items-center gap-2.5 text-sm text-gray-700">
+                                <div className="w-1.5 h-1.5 bg-gray-400 rounded-full flex-shrink-0" />
+                                {topic}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </section>
+
+              {/* What's Included */}
+              <section aria-labelledby="features-heading">
+                <h2 id="features-heading" className="text-2xl font-bold text-gray-900 mb-6 pb-3 border-b border-gray-200">
+                  What's Included
+                </h2>
+                <div className="grid sm:grid-cols-2 gap-3">
+                  {course.features?.map((feature, i) => (
+                    <div key={i} className="flex items-start gap-3 bg-white p-4 rounded-xl border border-gray-200">
+                      <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                      <span className="text-gray-700 text-sm font-medium">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+              </section>
+
+              {/* Instructor */}
+              {course.instructor && (
+                <section aria-labelledby="instructor-heading">
+                  <h2 id="instructor-heading" className="text-2xl font-bold text-gray-900 mb-6 pb-3 border-b border-gray-200">
+                    Meet Your Instructor
+                  </h2>
+                  <div className="bg-white rounded-2xl border border-gray-200 p-6 flex flex-col sm:flex-row gap-5 max-w-2xl">
+                    <img
+                      src={course.instructor.image}
+                      alt={course.instructor.name}
+                      className="w-20 h-20 rounded-full object-cover flex-shrink-0 ring-2 ring-gray-200"
+                    />
+                    <div>
+                      <p className="text-lg font-bold text-gray-900 mb-0.5">{course.instructor.name}</p>
+                      <p className="text-sm text-gray-500 mb-3">{course.instructor.title}</p>
+                      <p className="text-sm text-gray-700 leading-relaxed">{course.instructor.bio}</p>
+                    </div>
+                  </div>
+                </section>
+              )}
+
+              {/* Prerequisites */}
+              {course.prerequisites && (
+                <section aria-labelledby="prereq-heading">
+                  <h2 id="prereq-heading" className="text-2xl font-bold text-gray-900 mb-6 pb-3 border-b border-gray-200">
+                    Prerequisites
+                  </h2>
+                  <div className="bg-white rounded-xl border-l-4 border-l-gray-900 border border-gray-200 p-6 max-w-2xl">
+                    <p className="text-gray-700 leading-relaxed">{course.prerequisites}</p>
+                  </div>
+                </section>
+              )}
+            </div>
+
+            {/* ── SIDEBAR — sticky enroll card ── */}
+            <aside className="lg:col-span-1">
+              <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden sticky top-24">
+                <div className="h-1 bg-gradient-to-r from-black to-gray-500" />
+                <div className="p-6">
+
+                  {/* Price */}
+                  <div className="mb-5">
+                    <p className="text-3xl font-bold text-gray-900 mb-1">{course.price}</p>
+                    <p className="text-sm text-gray-500">
+                      {course.isOpen
+                        ? <>Cohort starts <span className="font-semibold text-gray-900">{course.startDate}</span></>
+                        : 'Check back for upcoming dates'
+                      }
+                    </p>
+                  </div>
+
+                  {/* Stats */}
+                  <div className="space-y-3 mb-5 pb-5 border-b border-gray-100">
+                    {[
+                      { icon: Clock, label: 'Duration', value: course.duration },
+                      { icon: Award, label: 'Level', value: course.level },
+                      { icon: Users, label: 'Students', value: course.students },
+                      { icon: BookOpen, label: 'Format', value: 'Cohort-based, online' },
+                    ].map(({ icon: Icon, label, value }) => (
+                      <div key={label} className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-gray-500">
+                          <Icon className="w-3.5 h-3.5" />
+                          <span className="text-xs">{label}</span>
+                        </div>
+                        <span className="text-xs font-semibold text-gray-900">{value}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Sidebar alerts */}
+                  {error && (
+                    <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex gap-2">
+                      <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />
+                      <p className="text-xs text-red-700">{error}</p>
+                    </div>
+                  )}
+                  {successMsg && (
+                    <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg flex gap-2">
+                      <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
+                      <p className="text-xs text-green-800 font-medium">{successMsg}</p>
+                    </div>
+                  )}
+
+                  {/* CTA buttons */}
+                  <div className="space-y-2.5">
+                    <button
+                      onClick={handleEnrollClick}
+                      disabled={enrolling}
+                      className={`w-full py-3.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${
+                        isEnrolled
+                          ? 'bg-white border-2 border-black text-black hover:bg-black hover:text-white'
+                          : 'bg-black text-white hover:bg-gray-800'
+                      } disabled:opacity-60 disabled:cursor-not-allowed`}
+                    >
+                      {enrolling && <Loader2 className="w-4 h-4 animate-spin" />}
+                      {!enrolling && isEnrolled && <CheckCircle className="w-4 h-4" />}
+                      {enrollBtnLabel()}
+                      {!enrolling && <ChevronRight className="w-4 h-4" />}
+                    </button>
+
+                    {isEnrolled && user && (
+                      <button
+                        onClick={() => setShowUnenrollModal(true)}
+                        className="w-full py-2.5 border border-red-300 text-red-500 rounded-xl text-xs font-semibold hover:bg-red-50 hover:border-red-500 transition-all flex items-center justify-center gap-1.5"
+                      >
+                        <XCircle className="w-3.5 h-3.5" />
+                        Drop this course
+                      </button>
+                    )}
+
+                    <a
+                      href="mailto:admissions@sbatechschool.com"
+                      className="w-full py-2.5 border border-gray-200 text-gray-600 rounded-xl text-xs font-semibold hover:border-gray-400 hover:text-gray-900 transition-all flex items-center justify-center gap-1.5 no-underline"
+                    >
+                      Contact Admissions
+                    </a>
+                  </div>
+
+                  {/* Trust signals */}
+                  <div className="mt-5 pt-5 border-t border-gray-100 space-y-2">
+                    {[
+                      { icon: Shield, text: '95% job placement rate' },
+                      { icon: TrendingUp, text: '$85K avg. starting salary' },
+                      { icon: Users, text: '1,800+ alumni network' },
+                    ].map(({ icon: Icon, text }) => (
+                      <div key={text} className="flex items-center gap-2">
+                        <Icon className="w-3.5 h-3.5 text-green-600" />
+                        <span className="text-xs text-gray-500">{text}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </aside>
+          </div>
+
+          {/* ── BOTTOM CTA ── */}
+          <div className="mt-16 bg-gray-900 rounded-2xl px-8 py-10 sm:px-12 sm:py-12 flex flex-col sm:flex-row items-center justify-between gap-6">
             <div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-1">
-                {course.instructor.name}
-              </h3>
-              <p className="text-lg text-gray-600 mb-3">
-                {course.instructor.title}
+              <p className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">
+                {course.isOpen ? 'Spring 2026 · Now Enrolling' : 'Waitlist Open'}
               </p>
-              <p className="text-gray-700">
-                {course.instructor.bio}
+              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">Ready to get started?</h2>
+              <p className="text-gray-400 text-sm leading-relaxed max-w-md">
+                {course.isOpen
+                  ? `Seats are limited. Apply today and we'll review your application within 24 hours.`
+                  : `Join the waitlist to be first notified when the next cohort opens.`
+                }
               </p>
+            </div>
+            <div className="flex gap-3 flex-shrink-0 flex-wrap">
+              <button
+                onClick={handleEnrollClick}
+                disabled={enrolling}
+                className="px-7 py-3.5 bg-white text-black font-bold text-sm rounded-xl hover:bg-gray-100 transition-colors flex items-center gap-2 disabled:opacity-60"
+              >
+                {isEnrolled ? 'Continue Learning' : course.isOpen ? 'Apply Now' : 'Join Waitlist'}
+                <ArrowRight className="w-4 h-4" />
+              </button>
+              <a href="/programs" className="px-7 py-3.5 border border-gray-700 text-gray-400 font-semibold text-sm rounded-xl hover:border-gray-400 hover:text-gray-200 transition-colors no-underline flex items-center gap-2">
+                All Programs
+              </a>
             </div>
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* Prerequisites */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
-            Prerequisites
-          </h2>
-          <div className="bg-white p-8 rounded-2xl border border-gray-200 max-w-3xl">
-            <p className="text-lg text-gray-700">
-              {course.prerequisites}
-            </p>
+      {/* ══════════════════════════════════════
+          MODALS — all original logic, cleaned UI
+      ══════════════════════════════════════ */}
+
+      {/* Welcome Screen */}
+      {showWelcomeScreen && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="min-h-screen flex items-center justify-center p-4">
+            <div className="fixed inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setShowWelcomeScreen(false)} />
+            <div className="relative bg-white rounded-2xl p-10 max-w-xl w-full shadow-2xl">
+              <button onClick={() => setShowWelcomeScreen(false)} className="absolute top-5 right-5 text-gray-400 hover:text-black transition-colors">
+                <X className="w-5 h-5" />
+              </button>
+              <div className="text-center mb-7">
+                <div className="w-14 h-14 bg-black rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Award className="w-7 h-7 text-white" />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">Application for {course.title}</h2>
+                <p className="text-gray-500 text-sm">Review the requirements before beginning your application.</p>
+              </div>
+
+              {/* 2×2 quick stats */}
+              <div className="grid grid-cols-2 gap-3 mb-6">
+                {[
+                  { label: 'Time / Week', value: '10–15 hours' },
+                  { label: 'Duration', value: course.duration },
+                  { label: 'Format', value: 'Cohort-based' },
+                  { label: 'Starts', value: course.startDate },
+                ].map(({ label, value }) => (
+                  <div key={label} className="bg-gray-50 rounded-xl p-3.5 border border-gray-200">
+                    <p className="text-xs text-gray-500 mb-1">{label}</p>
+                    <p className="text-sm font-bold text-gray-900">{value}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="bg-gray-50 rounded-xl p-5 mb-6 border border-gray-200">
+                <p className="text-xs font-bold text-gray-700 uppercase tracking-wider mb-3">What You'll Get</p>
+                {[
+                  'Rigorous, project-based curriculum by industry experts',
+                  '1-on-1 mentorship and weekly office hours',
+                  'Portfolio-ready capstone project',
+                  'Career support — resume review & interview prep',
+                ].map(item => (
+                  <div key={item} className="flex items-center gap-2.5 mb-2 text-sm text-gray-700">
+                    <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
+                    {item}
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex gap-3">
+                <button onClick={() => setShowWelcomeScreen(false)} className="flex-1 py-3 border-2 border-gray-200 text-gray-600 rounded-xl font-semibold hover:border-gray-400 transition-all text-sm">
+                  Not Now
+                </button>
+                <button onClick={() => { setShowWelcomeScreen(false); setShowAssessmentModal(true); }}
+                  className="flex-2 flex-grow py-3 bg-black text-white rounded-xl font-bold hover:bg-gray-800 transition-all text-sm flex items-center justify-center gap-2">
+                  Start Application <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-      </section>
+      )}
 
-      {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-            Ready to Start Learning?
-          </h2>
-          <p className="text-xl text-gray-700 mb-8">
-            Join thousands of students building their tech careers
-          </p>
-          <button
-            onClick={handleEnroll}
-            disabled={enrolling || (!course.isOpen && user)}
-            className={getEnrollButtonClass()}
-          >
-            {enrolling && <Loader2 className="w-5 h-5 animate-spin" />}
-            {getEnrollButtonText()}
-            {!enrolling && <ArrowRight className="w-6 h-6" />}
-          </button>
-        </div>
-      </section>
+      {/* Assessment */}
+      {showAssessmentModal && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="min-h-screen flex items-center justify-center p-4">
+            <div className="fixed inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setShowAssessmentModal(false)} />
+            <div className="relative bg-white rounded-2xl p-8 max-w-xl w-full shadow-2xl max-h-[90vh] overflow-y-auto">
+              <div className="flex items-start justify-between mb-6">
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-1">Application Assessment</h3>
+                  <p className="text-sm text-gray-500">No wrong answers — help us understand your goals.</p>
+                </div>
+                <button onClick={() => setShowAssessmentModal(false)} className="text-gray-400 hover:text-black transition-colors ml-4">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
 
-      {/* Footer */}
-      <footer className="py-8 bg-white border-t border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-gray-600 text-sm">
-          <div className="flex gap-6 mb-4 md:mb-0">
-            <a href="#" className="hover:text-gray-900">Terms of Service</a>
-            <a href="#" className="hover:text-gray-900">Privacy Policy</a>
-            <a href="#" className="hover:text-gray-900">Contact</a>
+              <form onSubmit={handleAssessmentSubmit} className="space-y-6">
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
+                    1. Why do you want to join this program? *
+                  </label>
+                  <textarea
+                    value={assessmentData.whyJoin}
+                    onChange={e => setAssessmentData(p => ({ ...p, whyJoin: e.target.value }))}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-black focus:outline-none resize-none text-sm text-gray-900"
+                    rows={3} placeholder="Share your motivation and career goals…" required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
+                    2. Current experience level *
+                  </label>
+                  <div className="space-y-2">
+                    {[
+                      { v: 'beginner', l: 'Complete Beginner', d: 'New to this field' },
+                      { v: 'some', l: 'Some Experience', d: '1–2 projects or courses' },
+                      { v: 'intermediate', l: 'Intermediate', d: 'Multiple projects, comfortable with basics' },
+                      { v: 'advanced', l: 'Advanced', d: 'Professional or extensive self-directed work' },
+                    ].map(opt => (
+                      <label key={opt.v} className={`flex items-start gap-3 p-3.5 border rounded-xl cursor-pointer transition-all ${
+                        assessmentData.experienceLevel === opt.v ? 'border-black bg-black text-white' : 'border-gray-200 hover:border-gray-400'
+                      }`}>
+                        <input type="radio" name="exp" value={opt.v}
+                          checked={assessmentData.experienceLevel === opt.v}
+                          onChange={e => setAssessmentData(p => ({ ...p, experienceLevel: e.target.value }))}
+                          className="mt-0.5 w-4 h-4" required
+                        />
+                        <div>
+                          <p className="font-bold text-sm">{opt.l}</p>
+                          <p className={`text-xs mt-0.5 ${assessmentData.experienceLevel === opt.v ? 'text-gray-300' : 'text-gray-500'}`}>{opt.d}</p>
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
+                    3. Primary learning goals *
+                  </label>
+                  <textarea
+                    value={assessmentData.learningGoals}
+                    onChange={e => setAssessmentData(p => ({ ...p, learningGoals: e.target.value }))}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-black focus:outline-none resize-none text-sm text-gray-900"
+                    rows={3} placeholder="Career change, skill upgrade, build projects, etc." required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
+                    4. Can you commit 10–15 hours per week? *
+                  </label>
+                  <div className="space-y-2">
+                    {[
+                      { v: 'yes', l: 'Yes, fully committed to 10–15 hrs/week' },
+                      { v: 'flexible', l: "My schedule is flexible — I'll make it work" },
+                      { v: 'challenging', l: "It'll be a stretch, but I'm committed" },
+                    ].map(opt => (
+                      <label key={opt.v} className={`flex items-center gap-3 p-3.5 border rounded-xl cursor-pointer transition-all ${
+                        assessmentData.weeklyCommitment === opt.v ? 'border-black bg-black text-white' : 'border-gray-200 hover:border-gray-400'
+                      }`}>
+                        <input type="radio" name="commit" value={opt.v}
+                          checked={assessmentData.weeklyCommitment === opt.v}
+                          onChange={e => setAssessmentData(p => ({ ...p, weeklyCommitment: e.target.value }))}
+                          className="w-4 h-4" required
+                        />
+                        <span className="font-semibold text-sm">{opt.l}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex gap-3 pt-2">
+                  <button type="button" onClick={() => { setShowAssessmentModal(false); setShowWelcomeScreen(true); }}
+                    className="flex-1 py-3 border-2 border-gray-200 text-gray-600 rounded-xl font-semibold hover:border-gray-400 transition-all text-sm">
+                    ← Back
+                  </button>
+                  <button type="submit"
+                    className="flex-grow py-3 bg-black text-white rounded-xl font-bold hover:bg-gray-800 transition-all text-sm flex items-center justify-center gap-2">
+                    Submit & Enroll <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
-          <p>© 2026 SBA. All rights reserved.</p>
         </div>
-      </footer>
-    </div>
+      )}
+
+      {/* Max Courses */}
+      {showMaxCoursesModal && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="min-h-screen flex items-center justify-center p-4">
+            <div className="fixed inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setShowMaxCoursesModal(false)} />
+            <div className="relative bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl">
+              <div className="flex items-start gap-4 mb-5">
+                <div className="w-11 h-11 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <AlertCircle className="w-5 h-5 text-orange-600" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-1">Maximum Courses Reached</h3>
+                  <p className="text-sm text-gray-600 mb-3">You can only be enrolled in 2 courses at a time. Currently enrolled:</p>
+                  <div className="space-y-1.5 mb-3">
+                    {enrolledCourses.map(id => {
+                      const c = courseData[id];
+                      return (
+                        <div key={id} className="flex items-center gap-2 text-sm text-gray-700">
+                          <CheckCircle className="w-4 h-4 text-green-600" />
+                          {c?.title || id}
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <p className="text-xs text-gray-500">Complete or drop a course to enroll in a new one.</p>
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <button onClick={() => setShowMaxCoursesModal(false)} className="flex-1 py-2.5 border-2 border-gray-200 text-gray-600 rounded-xl font-semibold text-sm hover:border-gray-400 transition-all">
+                  Close
+                </button>
+                <button onClick={() => { setShowMaxCoursesModal(false); navigate('/ehub'); }}
+                  className="flex-1 py-2.5 bg-black text-white rounded-xl font-bold text-sm hover:bg-gray-800 transition-all">
+                  Go to Dashboard
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Unenroll Confirm */}
+      {showUnenrollModal && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="min-h-screen flex items-center justify-center p-4">
+            <div className="fixed inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setShowUnenrollModal(false)} />
+            <div className="relative bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl">
+              <div className="flex items-start gap-4 mb-5">
+                <div className="w-11 h-11 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <XCircle className="w-5 h-5 text-red-600" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-1">Drop this course?</h3>
+                  <p className="text-sm text-gray-600 mb-1">
+                    You're about to drop <strong>{course.title}</strong>.
+                  </p>
+                  <p className="text-xs text-gray-500">Your progress will be saved. You can re-enroll if the course is still open.</p>
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <button onClick={() => setShowUnenrollModal(false)} disabled={unenrolling}
+                  className="flex-1 py-2.5 border-2 border-gray-200 text-gray-600 rounded-xl font-semibold text-sm hover:border-gray-400 transition-all">
+                  Cancel
+                </button>
+                <button onClick={handleUnenroll} disabled={unenrolling}
+                  className="flex-1 py-2.5 bg-red-600 text-white rounded-xl font-bold text-sm hover:bg-red-700 transition-all flex items-center justify-center gap-2 disabled:opacity-60">
+                  {unenrolling && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                  {unenrolling ? 'Dropping…' : 'Yes, Drop Course'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

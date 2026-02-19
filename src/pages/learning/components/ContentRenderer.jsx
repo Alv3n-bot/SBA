@@ -2,6 +2,7 @@ import { Lock, Link as LinkIcon } from 'lucide-react';
 import VideoBlock from './VideoBlock';
 import AssignmentBlock from './AssignmentBlock';
 import QuizBlock from './QuizBlock';
+import { db, auth, storage } from '../../../firebase';
 
 export default function ContentRenderer({
   block,
@@ -15,8 +16,17 @@ export default function ContentRenderer({
   onTextSubmit,
   onFileUpload,
   onUrlSubmit,
-  onQuizComplete
+  onQuizComplete,
+  onCodeSubmissionComplete
 }) {
+  
+  // ADD THIS AT THE VERY TOP
+  console.log('ContentRenderer props:', {
+    blockId: block.id,
+    weekId,
+    sectionId,
+    courseId  // ← This is probably undefined
+  });
   const renderBlock = () => {
     switch (block.type) {
       case 'heading':
@@ -102,8 +112,13 @@ export default function ContentRenderer({
             onTextSubmit={onTextSubmit}
             onFileUpload={onFileUpload}
             onUrlSubmit={onUrlSubmit}
+            courseId={courseId}
+            studentId={auth.currentUser.uid}
+            studentGithubUsername={auth.currentUser.githubUsername}
+            onCodeSubmissionComplete={onCodeSubmissionComplete}
           />
         );
+        
       
       case 'quiz':
         return (

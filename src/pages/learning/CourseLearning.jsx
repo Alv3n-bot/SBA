@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   doc, getDoc, setDoc, updateDoc, collection, query, where, getDocs,
@@ -18,9 +18,17 @@ import LoadingState from './components/LoadingState';
 import ErrorState from './components/ErrorState';
 import Settings from '../ehub/Settings';
 import Notifications from '../ehub/Notifications';
+import MarkCompleteButton from './components/MarkCompleteButton';
+import { ToastContainer } from './components/Toast';
+
+// Utilities
+import { useToast } from './hooks/useToast';
+import { courseCache, progressCache, submissionsCache, quizResultsCache } from './utils/cache';
+import { MESSAGES, FIREBASE_CONFIG, KEYBOARD_SHORTCUTS } from './config/constants';
 
 export default function CourseLearning() {
   const { courseId } = useParams();
+  const { toasts, removeToast, showSuccess, showError, showWarning } = useToast();
   
   // Core State
   const [course, setCourse] = useState(null);
@@ -46,6 +54,9 @@ export default function CourseLearning() {
   const [submissions, setSubmissions] = useState({});
   const [uploadingFile, setUploadingFile] = useState(null);
   
+  // Code Checking State - NEW
+  const [codeSubmissions, setCodeSubmissions] = useState({});
+  
   // Subscription State
   const [hasActiveSubscription, setHasActiveSubscription] = useState(false);
   const [subscriptionChecked, setSubscriptionChecked] = useState(false);
@@ -59,6 +70,43 @@ export default function CourseLearning() {
     initializeLearning();
   }, [courseId]);
 
+  // ==================== KEYBOARD NAVIGATION ====================
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      // Don't trigger if user is typing in an input
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      
+      // Don't trigger if modals are open
+      if (showSettings || showNotifications) {
+        if (e.key === KEYBOARD_SHORTCUTS.CLOSE_MODAL) {
+          setShowSettings(false);
+          setShowNotifications(false);
+        }
+        return;
+      }
+
+      switch (e.key) {
+        case KEYBOARD_SHORTCUTS.NEXT_SECTION:
+          e.preventDefault();
+          goToNextSection();
+          break;
+        case KEYBOARD_SHORTCUTS.PREVIOUS_SECTION:
+          e.preventDefault();
+          goToPreviousSection();
+          break;
+        case KEYBOARD_SHORTCUTS.TOGGLE_SIDEBAR:
+          e.preventDefault();
+          setShowSidebar(prev => !prev);
+          break;
+        default:
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [showSettings, showNotifications, currentWeekIndex, currentSectionIndex, course]);
+
   const initializeLearning = async () => {
     setLoading(true);
     try {
@@ -70,7 +118,7 @@ export default function CourseLearning() {
 
       const userDoc = await getDoc(doc(db, 'users', user.uid));
       if (!userDoc.exists()) {
-        setError('User profile not found');
+        setError(MESSAGES.ERROR.USER_NOT_FOUND);
         setSubscriptionChecked(true);
         setLoading(false);
         return;
@@ -88,14 +136,22 @@ export default function CourseLearning() {
         return;
       }
 
-      const courseDoc = await getDoc(doc(db, 'courses', courseId));
-      if (!courseDoc.exists()) {
-        setError('Course not found');
-        setLoading(false);
-        return;
+      // Try to load course from cache first
+      let courseData = courseCache.get(courseId);
+      
+      if (!courseData) {
+        // If not in cache, fetch from Firebase
+        const courseDoc = await getDoc(doc(db, 'courses', courseId));
+        if (!courseDoc.exists()) {
+          setError(MESSAGES.ERROR.COURSE_NOT_FOUND);
+          setLoading(false);
+          return;
+        }
+        courseData = courseDoc.data();
+        // Cache the course data
+        courseCache.set(courseId, courseData);
       }
 
-      const courseData = courseDoc.data();
       setCourse(courseData);
 
       await loadOrCreateCohort(user.uid, courseId);
@@ -106,12 +162,14 @@ export default function CourseLearning() {
       }
       setExpandedWeeks(initialExpanded);
 
-      await loadOrCreateProgress(user.uid, courseId, courseData);
-      await loadSubmissions(user.uid, courseId);
-      await loadQuizResults(user.uid, courseId);
+      // Load data with caching
+      await loadOrCreateProgressWithCache(user.uid, courseId, courseData);
+      await loadSubmissionsWithCache(user.uid, courseId);
+      await loadQuizResultsWithCache(user.uid, courseId);
+      await loadCodeSubmissions(user.uid, courseId); // NEW - Load code submissions
     } catch (err) {
       console.error('Error initializing learning:', err);
-      setError('Failed to load course: ' + err.message);
+      setError(MESSAGES.ERROR.LOADING_FAILED + ': ' + err.message);
     } finally {
       setLoading(false);
     }
@@ -127,8 +185,43 @@ export default function CourseLearning() {
   };
 
   // ==================== COHORT MANAGEMENT ====================
-  const loadOrCreateCohort = async (userId, courseId) => {
-    try {
+  // ==================== COHORT MANAGEMENT ====================
+// This replaces the loadOrCreateCohort function in CourseLearning.jsx
+
+const loadOrCreateCohort = async (userId, courseId) => {
+  try {
+    // First, check user's enrollments mapping to get the cohort ID
+    const userDoc = await getDoc(doc(db, 'users', userId));
+    
+    if (!userDoc.exists()) {
+      console.error('User document not found');
+      return;
+    }
+    
+    const userData = userDoc.data();
+    const enrollments = userData.enrollments || {};
+    const cohortId = enrollments[courseId];
+    
+    if (cohortId) {
+      // Load the assigned cohort
+      const cohortDoc = await getDoc(doc(db, 'cohorts', cohortId));
+      
+      if (cohortDoc.exists()) {
+        const cohortData = cohortDoc.data();
+        setCohort({ 
+          id: cohortDoc.id, 
+          ...cohortData,
+          startDate: cohortData.startDate?.toDate ? cohortData.startDate.toDate() : cohortData.startDate,
+          endDate: cohortData.endDate?.toDate ? cohortData.endDate.toDate() : cohortData.endDate
+        });
+        console.log(`Loaded cohort: ${cohortData.name}`);
+      } else {
+        console.error('Cohort document not found for ID:', cohortId);
+      }
+    } else {
+      // Fallback: Search by studentIds (shouldn't happen if enrollment flow is correct)
+      console.warn('No cohort mapping found in enrollments, searching by studentIds...');
+      
       const cohortQuery = query(
         collection(db, 'cohorts'),
         where('courseId', '==', courseId),
@@ -138,71 +231,52 @@ export default function CourseLearning() {
 
       if (!cohortSnapshot.empty) {
         const cohortData = cohortSnapshot.docs[0].data();
-        setCohort({ id: cohortSnapshot.docs[0].id, ...cohortData });
+        setCohort({ 
+          id: cohortSnapshot.docs[0].id, 
+          ...cohortData,
+          startDate: cohortData.startDate?.toDate ? cohortData.startDate.toDate() : cohortData.startDate,
+          endDate: cohortData.endDate?.toDate ? cohortData.endDate.toDate() : cohortData.endDate
+        });
+        console.log(`Found cohort via search: ${cohortData.name}`);
       } else {
-        const allCohortsQuery = query(
-          collection(db, 'cohorts'),
-          where('courseId', '==', courseId),
-          where('status', '==', 'active')
-        );
-        const allCohortsSnapshot = await getDocs(allCohortsQuery);
-        let targetCohort = null;
-
-        for (const doc of allCohortsSnapshot.docs) {
-          const data = doc.data();
-          if ((data.studentIds?.length || 0) < 30) {
-            targetCohort = { id: doc.id, ...data };
-            break;
-          }
-        }
-
-        if (targetCohort) {
-          await updateDoc(doc(db, 'cohorts', targetCohort.id), {
-            studentIds: [...(targetCohort.studentIds || []), userId],
-            updatedAt: serverTimestamp()
-          });
-          setCohort(targetCohort);
-        } else {
-          const newCohort = {
-            courseId,
-            name: `Cohort ${allCohortsSnapshot.size + 1}`,
-            studentIds: [userId],
-            status: 'active',
-            createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp()
-          };
-          const cohortRef = await addDoc(collection(db, 'cohorts'), newCohort);
-          setCohort({ id: cohortRef.id, ...newCohort });
-        }
+        console.error('Student not assigned to any cohort for this course');
       }
-    } catch (err) {
-      console.error('Error managing cohort:', err);
     }
-  };
+  } catch (err) {
+    console.error('Error loading cohort:', err);
+  }
+};    
 
-  // ==================== PROGRESS MANAGEMENT ====================
-  const loadOrCreateProgress = async (userId, courseId, courseData) => {
+  // ==================== PROGRESS MANAGEMENT WITH CACHE ====================
+  const loadOrCreateProgressWithCache = async (userId, courseId, courseData) => {
     try {
-      const progressDoc = await getDoc(doc(db, 'progress', `${userId}_${courseId}`));
-      if (progressDoc.exists()) {
-        const progressData = progressDoc.data();
-        setUserProgress(progressData);
-        setCompletedSections(new Set(progressData.completedSections || []));
-      } else {
-        const newProgress = {
-          userId,
-          courseId,
-          completedSections: [],
-          quizScores: {},
-          lastAccessedWeek: 0,
-          lastAccessedSection: 0,
-          startedAt: serverTimestamp(),
-          lastAccessedAt: serverTimestamp()
-        };
-        await setDoc(doc(db, 'progress', `${userId}_${courseId}`), newProgress);
-        setUserProgress(newProgress);
-        setCompletedSections(new Set());
+      // Try cache first
+      let progressData = progressCache.get(userId, courseId);
+      
+      if (!progressData) {
+        // Fetch from Firebase if not cached
+        const progressDoc = await getDoc(doc(db, 'progress', `${userId}_${courseId}`));
+        if (progressDoc.exists()) {
+          progressData = progressDoc.data();
+        } else {
+          progressData = {
+            userId,
+            courseId,
+            completedSections: [],
+            quizScores: {},
+            lastAccessedWeek: 0,
+            lastAccessedSection: 0,
+            startedAt: serverTimestamp(),
+            lastAccessedAt: serverTimestamp()
+          };
+          await setDoc(doc(db, 'progress', `${userId}_${courseId}`), progressData);
+        }
+        // Cache the progress
+        progressCache.set(userId, courseId, progressData);
       }
+      
+      setUserProgress(progressData);
+      setCompletedSections(new Set(progressData.completedSections || []));
     } catch (err) {
       console.error('Error loading progress:', err);
     }
@@ -219,71 +293,130 @@ export default function CourseLearning() {
       setCompletedSections(newCompleted);
 
       const completedArray = Array.from(newCompleted);
-      await updateDoc(doc(db, 'progress', `${auth.currentUser.uid}_${courseId}`), {
+      const progressData = {
         completedSections: completedArray,
         lastAccessedAt: serverTimestamp()
-      });
+      };
+      
+      await updateDoc(doc(db, 'progress', `${auth.currentUser.uid}_${courseId}`), progressData);
 
-      setUserProgress(prev => ({
-        ...prev,
-        completedSections: completedArray
-      }));
+      // Update cache
+      const updatedProgress = {
+        ...userProgress,
+        ...progressData
+      };
+      setUserProgress(updatedProgress);
+      progressCache.set(auth.currentUser.uid, courseId, updatedProgress);
+      
+      showSuccess(MESSAGES.SUCCESS.SECTION_COMPLETED);
     } catch (err) {
       console.error('Error marking section complete:', err);
+      showError(MESSAGES.ERROR.MARK_COMPLETE_FAILED);
     }
   };
 
-  const checkAndMarkSectionComplete = async (weekId, sectionId) => {
-    if (!course || !hasActiveSubscription) return;
+  // ==================== CODE SUBMISSIONS MANAGEMENT - NEW ====================
+  const loadCodeSubmissions = async (userId, courseId) => {
+    try {
+      const q = query(
+        collection(db, 'code_submissions'),
+        where('studentId', '==', userId),
+        where('courseId', '==', courseId)
+      );
+      const snapshot = await getDocs(q);
+      
+      const subs = {};
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const assignmentId = data.assignmentId;
+        
+        // Keep the best score for each assignment (prioritize passed submissions)
+        if (!subs[assignmentId] || 
+            (data.allTestsPassed && !subs[assignmentId].allTestsPassed) ||
+            (data.score > (subs[assignmentId].score || 0))) {
+          subs[assignmentId] = {
+            id: doc.id,
+            ...data
+          };
+        }
+      });
+      
+      setCodeSubmissions(subs);
+      console.log('Loaded code submissions:', subs);
+    } catch (err) {
+      console.error('Error loading code submissions:', err);
+    }
+  };
+
+  const getIncompleteItems = useCallback((weekId, sectionId) => {
+    if (!course) return { hasIncomplete: false, count: 0 };
 
     const week = course.weeks.find(w => w.id === weekId);
     const section = week?.sections.find(s => s.id === sectionId);
-    if (!section) return;
+    if (!section) return { hasIncomplete: false, count: 0 };
 
-    let allComplete = true;
+    let incompleteCount = 0;
+
     for (const block of section.content) {
       if (block.type === 'quiz') {
         const result = quizResults[block.id];
         if (!result || !result.passed) {
-          allComplete = false;
-          break;
+          incompleteCount++;
         }
       } else if (block.type === 'assignment') {
-        const submission = submissions[block.id];
-        if (!submission || !submission.submittedAt) {
-          allComplete = false;
-          break;
+        // Check if it's a code checking assignment
+        if (block.codeCheckingEnabled && block.codeChecking) {
+          const codeSubmission = codeSubmissions[block.id];
+          if (!codeSubmission || !codeSubmission.allTestsPassed) {
+            incompleteCount++;
+          }
+        } else {
+          // Regular assignment - check submissions collection
+          const submission = submissions[block.id];
+          if (!submission || !submission.submittedAt) {
+            incompleteCount++;
+          }
         }
       }
     }
 
-    if (allComplete) {
-      await markSectionComplete(weekId, sectionId);
-    }
-  };
+    return {
+      hasIncomplete: incompleteCount > 0,
+      count: incompleteCount
+    };
+  }, [course, quizResults, submissions, codeSubmissions]);
 
-  // ==================== QUIZ MANAGEMENT ====================
-  const loadQuizResults = async (userId, courseId) => {
+  // ==================== QUIZ MANAGEMENT WITH CACHE ====================
+  const loadQuizResultsWithCache = async (userId, courseId) => {
     try {
-      const quizQuery = query(
-        collection(db, 'quiz_results'),
-        where('userId', '==', userId),
-        where('courseId', '==', courseId)
-      );
-      const quizSnapshot = await getDocs(quizQuery);
-      const results = {};
+      // Try cache first
+      let results = quizResultsCache.get(userId, courseId);
+      
+      if (!results) {
+        // Fetch from Firebase if not cached
+        const quizQuery = query(
+          collection(db, 'quiz_results'),
+          where('userId', '==', userId),
+          where('courseId', '==', courseId)
+        );
+        const quizSnapshot = await getDocs(quizQuery);
+        results = {};
 
-      quizSnapshot.forEach((doc) => {
-        const data = doc.data();
-        results[data.quizId] = {
-          score: data.score,
-          totalQuestions: data.totalQuestions,
-          correctAnswers: data.correctAnswers,
-          answers: data.answers,
-          passed: data.passed,
-          submittedAt: data.submittedAt
-        };
-      });
+        quizSnapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          results[data.quizId] = {
+            score: data.score,
+            totalQuestions: data.totalQuestions,
+            correctAnswers: data.correctAnswers,
+            answers: data.answers,
+            passed: data.passed,
+            submittedAt: data.submittedAt
+          };
+        });
+        
+        // Cache the results
+        quizResultsCache.set(userId, courseId, results);
+      }
 
       setQuizResults(results);
     } catch (err) {
@@ -291,31 +424,45 @@ export default function CourseLearning() {
     }
   };
 
-  const handleQuizComplete = (quizId, result) => {
-    setQuizResults(prev => ({
-      ...prev,
-      [quizId]: result
-    }));
-  };
+  const handleQuizComplete = useCallback((quizId, result) => {
+    setQuizResults(prev => {
+      const updated = {
+        ...prev,
+        [quizId]: result
+      };
+      // Update cache
+      quizResultsCache.set(auth.currentUser.uid, courseId, updated);
+      return updated;
+    });
+  }, [courseId]);
 
-  // ==================== ASSIGNMENT MANAGEMENT ====================
-  const loadSubmissions = async (userId, courseId) => {
+  // ==================== ASSIGNMENT MANAGEMENT WITH CACHE ====================
+  const loadSubmissionsWithCache = async (userId, courseId) => {
     try {
-      const submissionQuery = query(
-        collection(db, 'submissions'),
-        where('userId', '==', userId),
-        where('courseId', '==', courseId)
-      );
-      const submissionSnapshot = await getDocs(submissionQuery);
-      const subs = {};
+      // Try cache first
+      let subs = submissionsCache.get(userId, courseId);
+      
+      if (!subs) {
+        // Fetch from Firebase if not cached
+        const submissionQuery = query(
+          collection(db, 'submissions'),
+          where('userId', '==', userId),
+          where('courseId', '==', courseId)
+        );
+        const submissionSnapshot = await getDocs(submissionQuery);
+        subs = {};
 
-      submissionSnapshot.forEach((doc) => {
-        const data = doc.data();
-        subs[data.assignmentId] = {
-          id: doc.id,
-          ...data
-        };
-      });
+        submissionSnapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          subs[data.assignmentId] = {
+            id: docSnap.id,
+            ...data
+          };
+        });
+        
+        // Cache the submissions
+        submissionsCache.set(userId, courseId, subs);
+      }
 
       setSubmissions(subs);
     } catch (err) {
@@ -339,19 +486,22 @@ export default function CourseLearning() {
 
       const submissionRef = await addDoc(collection(db, 'submissions'), submissionData);
 
-      setSubmissions(prev => ({
-        ...prev,
+      const updatedSubmissions = {
+        ...submissions,
         [assignmentBlock.id]: {
           id: submissionRef.id,
           ...submissionData
         }
-      }));
-
-      await checkAndMarkSectionComplete(weekId, sectionId);
-      alert('Assignment submitted successfully!');
+      };
+      
+      setSubmissions(updatedSubmissions);
+      // Update cache
+      submissionsCache.set(auth.currentUser.uid, courseId, updatedSubmissions);
+      
+      showSuccess(MESSAGES.SUCCESS.ASSIGNMENT_SUBMITTED);
     } catch (err) {
       console.error('Error submitting assignment:', err);
-      alert('Failed to submit assignment. Please try again.');
+      showError(MESSAGES.ERROR.ASSIGNMENT_SUBMIT_FAILED);
     }
   };
 
@@ -379,19 +529,22 @@ export default function CourseLearning() {
 
       const submissionRef = await addDoc(collection(db, 'submissions'), submissionData);
 
-      setSubmissions(prev => ({
-        ...prev,
+      const updatedSubmissions = {
+        ...submissions,
         [assignmentBlock.id]: {
           id: submissionRef.id,
           ...submissionData
         }
-      }));
-
-      await checkAndMarkSectionComplete(weekId, sectionId);
-      alert('File uploaded successfully!');
+      };
+      
+      setSubmissions(updatedSubmissions);
+      // Update cache
+      submissionsCache.set(auth.currentUser.uid, courseId, updatedSubmissions);
+      
+      showSuccess(MESSAGES.SUCCESS.FILE_UPLOADED);
     } catch (err) {
       console.error('Error uploading file:', err);
-      alert('Failed to upload file. Please try again.');
+      showError(MESSAGES.ERROR.FILE_UPLOAD_FAILED);
     } finally {
       setUploadingFile(null);
     }
@@ -413,19 +566,22 @@ export default function CourseLearning() {
 
       const submissionRef = await addDoc(collection(db, 'submissions'), submissionData);
 
-      setSubmissions(prev => ({
-        ...prev,
+      const updatedSubmissions = {
+        ...submissions,
         [assignmentBlock.id]: {
           id: submissionRef.id,
           ...submissionData
         }
-      }));
-
-      await checkAndMarkSectionComplete(weekId, sectionId);
-      alert('URL submitted successfully!');
+      };
+      
+      setSubmissions(updatedSubmissions);
+      // Update cache
+      submissionsCache.set(auth.currentUser.uid, courseId, updatedSubmissions);
+      
+      showSuccess(MESSAGES.SUCCESS.URL_SUBMITTED);
     } catch (err) {
       console.error('Error submitting URL:', err);
-      alert('Failed to submit URL. Please try again.');
+      showError(MESSAGES.ERROR.URL_SUBMIT_FAILED);
     }
   };
 
@@ -488,9 +644,17 @@ export default function CourseLearning() {
   const currentSection = currentWeek?.sections[currentSectionIndex];
   const hasNext = currentSectionIndex < currentWeek?.sections.length - 1 || currentWeekIndex < course.weeks.length - 1;
   const hasPrevious = currentSectionIndex > 0 || currentWeekIndex > 0;
+  
+  // Check if current section is completed and has incomplete items
+  const sectionKey = `${currentWeek?.id}_${currentSection?.id}`;
+  const isSectionCompleted = completedSections.has(sectionKey);
+  const { hasIncomplete, count: incompleteCount } = getIncompleteItems(currentWeek?.id, currentSection?.id);
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
+      {/* Toast Container */}
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
+      
       <CourseHeader
         course={course}
         currentWeek={currentWeek}
@@ -550,16 +714,29 @@ export default function CourseLearning() {
                     onUrlSubmit={handleUrlSubmission}
                     onQuizComplete={(quizId, result) => {
                       handleQuizComplete(quizId, result);
-                      checkAndMarkSectionComplete(currentWeek.id, currentSection.id);
+                      
                     }}
                   />
                 ))
               ) : (
                 <div className="text-center py-8">
                   <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                  <p className="text-gray-500 text-base">No content available for this section yet.</p>
+                  <p className="text-gray-500 text-base">{MESSAGES.INFO.NO_CONTENT}</p>
                 </div>
               )}
+            </div>
+            
+            {/* Mark as Complete Button */}
+            <div className="mb-6">
+              <MarkCompleteButton
+                weekId={currentWeek?.id}
+                sectionId={currentSection?.id}
+                isCompleted={isSectionCompleted}
+                hasIncompleteItems={hasIncomplete}
+                incompleteItemsCount={incompleteCount}
+                onMarkComplete={markSectionComplete}
+                disabled={!hasActiveSubscription}
+              />
             </div>
             
             <NavigationButtons

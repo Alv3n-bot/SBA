@@ -32,12 +32,14 @@ function Hero() {
             </div>
 
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight tracking-tight">
-              Skills for the <span className="text-indigo-600">Digital Economy</span>
+              Shape Your Future with Africa's Top<span className="text-indigo-600">  Tech Bootcamp</span>
             </h1>
             
-            <p className="text-base sm:text-lg md:text-xl text-gray-700 mt-4 md:mt-6 max-w-xl mx-auto lg:mx-0 font-medium">
-              Join a vibrant community of learners and build real-world projects with guidance from experienced developers. Your tech journey begins now.
-            </p>
+           <p className="text-base sm:text-lg md:text-xl text-gray-700 mt-4 md:mt-6 max-w-xl mx-auto lg:mx-0 font-medium">
+  Learn Software Engineering, AI, Data & Cybersecurity through hands-on projects,
+  live mentorship, and industry-aligned training designed to help you land real tech jobs.
+</p>
+
 
             {/* Stats */}
             <div className="flex items-center justify-center lg:justify-start gap-6 mt-6">
